@@ -68,11 +68,10 @@ Yaw_z = pi/2
 alpha_velocity = pi/2
 alpha = 0
 
-# Incialização de um Centro de Circunferência e um Raio (Deafault):
-C = [100, 100, 100]
-r = 20
+C = [100, 100, 100] # Inicialização do Centro
+r = 20  # Incialização do raio
 
-lg = 61.5
+Lg = 61.5
 
 
 # ============ Setup do Robô ============
@@ -91,9 +90,10 @@ UFactory_Lite.move_gohome(wait=True)          # Going to rest position
 
 # ============ Utilização dos Métodos ============
 
+# Ciclo para escolher o Modo de Operação:
 metodo = "0"
 
-while (metodo != "1" & metodo !="2"):
+while (metodo != "1" and metodo !="2"):
     os.system('cls' if os.name == 'nt' else 'clear') # Limpa o Terminal
 
     print("===================================")
@@ -102,6 +102,26 @@ while (metodo != "1" & metodo !="2"):
     print("===================================")
 
     metodo = input("Opção: ")
+
+
+# Ciclo para escolher os valores de C e r:
+while not (C[0].isdecimal() and C[1].isdecimal() and C[2].isdecimal()):
+    os.system('cls' if os.name == 'nt' else 'clear')  # Limpa o terminal
+
+    print("Introduza valores numéricos Centro e o Raio")
+    C[0] = input("Cx: ")
+    C[1] = input("Cy: ")
+    C[2] = input("Cz: ")
+    r = input("Raio: ")
+
+print(f"\nOs valores são: C = [{C[0]}, {C[1]}, {C[2]}] e r = {r}")
+
+# Conversão dos valores de C e r para double:
+C = [float(C[0]), float(C[1]), float(C[2])]
+r = float(r)
+
+
+
     
 
 # Se o Método escolhido for 1
