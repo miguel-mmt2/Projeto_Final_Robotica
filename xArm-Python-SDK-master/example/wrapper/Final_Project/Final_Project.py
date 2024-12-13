@@ -28,7 +28,7 @@ import sympy as sp
 
 # Expressões Matemáticas:
 import math
-from sympy import tensorproduct,shape, DotProduct, Matrix, pprint
+from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Inverse
 from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
@@ -38,7 +38,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI # Importar a API do Robô
 
-
+ip = 162.163
 
 # ============ Conexão ao Robô ============
 
@@ -68,16 +68,20 @@ Yaw_z = pi/2
 
 alpha_velocity = pi/2
 alpha = 0
+iterationTime = 0.1
 
 C = [100, 100, 100] # Inicialização do Centro
 r = 20  # Incialização do raio
 
 Lg = 61.5
 
+Kp = 0.9
+Ki = 0.04
+
 
 # ============ Setup do Robô ============
 
-#UFactory_Lite = XArmAPI(ip)
+UFactory_Lite = XArmAPI(ip)
 #UFactory_Lite.motion_enable(enable=True)
 #UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
 #UFactory_Lite.set_state(state=0)
@@ -228,16 +232,156 @@ Jac_w = sp.Array([
 #pprint(Jac_w)
 
 # Jacobiano Completo
-J0R = sp.Array([Jac_v,
-                Jac_w])
+J0R = sp.Array([[Jac_v[0,0], Jac_v[0,1], Jac_v[0,2], Jac_v[0,3], Jac_v[0,4], Jac_v[0,5]], 
+                [Jac_v[1,0], Jac_v[1,1], Jac_v[1,2], Jac_v[1,3], Jac_v[1,4], Jac_v[1,5]],
+                [Jac_v[2,0], Jac_v[2,1], Jac_v[2,2], Jac_v[2,3], Jac_v[2,4], Jac_v[2,5]], 
+                [Jac_w[0,0], Jac_w[0,1], Jac_w[0,2], Jac_w[0,3], Jac_w[0,4], Jac_w[0,5]],
+                [Jac_w[1,0], Jac_w[1,1], Jac_w[1,2], Jac_w[1,3], Jac_w[1,4], Jac_w[1,5]],
+                [Jac_w[2,0], Jac_w[2,1], Jac_w[2,2], Jac_w[2,3], Jac_w[2,4], Jac_w[2,5]],
+                ])
+
+J0R = sp.nsimplify(J0R, tolerance = 1e-5)
+
+#pprint(J0R.shape)
+#pprint(J0R)
+
+
+# Defining the cartisian velocities
+cartisian_velocities = np.array([           0,
+                 -r*sin(alpha)*alpha_velocity,
+ r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0])
 
 
 
+# Definição da posição inicial
+
+p_x = C[0]                               #  Compensação por um dos robôs não ter Gripper
+p_y = C[1] + r * cos(alpha)
+p_z = C[2] + r * cos(alpha) * sin(alpha)
+
+# Get the joint angles for initial position
+Pos_ini_angles=UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z],input_is_radian=True, return_is_radian=True)
+config_rads = Pos_ini_angles
+
+config_rads = UFactory_Lite.set_tool_position([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], speed = alpha_velocity, wait = True, is_radian = True)
+UFactory_Lite.set_mode(4) # modo de velocidades
+
+
+###########################   Start Section  ######################
+
+
+T_0G = UFactory_Lite.get_forward_kinematics(Pos_ini_angles,input_is_radian=True, return_is_radian=True)
+
+pprint(T_0G)
+
+py_g_i = T_0G[2]
+pz_g_i = T_0G[3]
+
+alpha_i = alpha + alpha_velocity * iterationTime
+
+
+# Variables for PI controller
+integrative_error_vy = 0
+integrative_error_vz = 0
+
+N_voltas = 1
 
 # Se o Método escolhido for 1
 
+while alpha_i < N_voltas*2*pi:
+
+    #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+    cartisian_velocities = np.array([           0,
+                    -r*sin(alpha_i)*alpha_velocity,
+    r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
+                                                0,
+                                                0,
+                                                0])
+    
+    T_0G = UFactory_Lite.get_forward_kinematics(config_rads,input_is_radian=True, return_is_radian=True)
+
+    # Real position values
+
+    py_g_r = T_0G[2]
+    pz_g_r = T_0G[3]
+
+
+    error_y = py_g_i - py_g_r
+    errodr_z = pz_g_i - pz_g_r
+
+    vel = prop_vel = Inverse(J0R_red_subs) * cartisian_velocities
+    # velocidade de compensação para parte proporcional
+    vyy = (py_g_i - py_g_r)/iterationTime
+    vzz = (pz_g_i - pz_g_r)/iterationTime
+
+    # velocidade de compensação para parte integrativa
+    integrative_error_vy = integrative_error_vy + vyy
+    integrative_error_vz = integrative_error_vz + vzz
+
+
+     # velocidade de erro proporcional
+    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])
+    # veocidrade de erro integrativo
+    vel_integrative = Inverse(J0R_red_subs) * sp.Array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0])
+
+
+    
+    # aqui que mandamos as velocidades
+
+    vel_config = vel + Kp * prop_vel + Ki * vel_integrative 
+
+    
+    
+    aux_config = config_rads + Kp * np.array([vel[0], vel[1],vel[2], vel[3], vel[4],vel[5]]) * iterationTime + Ki * np.array([vel_integrative[0], vel_integrative[1],vel_integrative[2], vel_integrative[3], vel_integrative[4],vel_integrative[5]]) * iterationTime
+    
+    py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
+    pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
+
+    alpha_i = alpha_i + alpha_velocity * iterationTime
+    
+
+    #UFactory_Lite.plot(config_rads, 'view', 'y')
+
+    UFactory_Lite.vc_set_joint_velocity(vel_config,is_radian=True)
+
+    config_rads = aux_config
+  
+
+
+
 
 # Se o Método escolhido for 2
+
+
+while alpha_i < N_voltas*2*pi:
+
+    #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+    cartisian_velocities = np.array([           0,
+                    -r*sin(alpha_i)*alpha_velocity,
+    r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
+                                                0,
+                                                0,
+                                                0])
+    
+
+    vel = Inverse(J0R_red_subs) * cartisian_velocities
+
+    
+
+
+    aux_config = config_rads + (np.array([vel(1), vel(2), vel(3), vel(4), vel(5), vel(6)]) * iterationTime)
+    
+    alpha = alpha + alpha_velocity * iterationTime
+
+    #UFactory_Lite6.plot(config_rads,'view','y')
+
+    UFactory_Lite.vc_set_joint_velocity(vel,is_radian=True)
+
+    config_rads = aux_config
+      
 
 
 # ============ Fim dos Métodos ============
