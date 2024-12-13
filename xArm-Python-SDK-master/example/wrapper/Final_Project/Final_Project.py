@@ -170,22 +170,19 @@ DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
 
 # Confirm the Transformation Matrices
 [Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
+
+
+for i in range(6):
+    Transformation_Matrices[i] = sp.nsimplify(Transformation_Matrices[i], tolerance=1e-5)
+
+    print(f"T_{i+1} = ")
+    sp.pprint(Transformation_Matrices[i])
+    print("\n")
+
+
 T_final = sp.simplify(T_final)
+sp.pprint(T_final)
 
-<<<<<<< HEAD
-print(T_final)
-P_0G = T_final[:2, 3]
-print(P_0G)
-
-Jac_v = sp.Array[sp.diff(P_0G[1], t1),
-                 sp.diff(P_0G[1], t2),                
-                 sp.diff(P_0G[1], t3),                
-                 sp.diff(P_0G[1], t4), 
-                 sp.diff(P_0G[1], t5),  
-                 sp.diff(P_0G[1], t6)]
-
-print(Jac_v)
-=======
 
 
 # Simplify das matrizes
@@ -196,25 +193,22 @@ Transformation_Matrices[3] = sp.simplify(Transformation_Matrices[3])  # T34
 Transformation_Matrices[4] = sp.simplify(Transformation_Matrices[4])  # T45
 Transformation_Matrices[5] = sp.simplify(Transformation_Matrices[5])  # T56
 
-print(Transformation_Matrices[5])
 
 # Transformation Matrices
 T_01_sym = Transformation_Matrices[0]
-T_02_sym = tensorproduct(T_01_sym, Transformation_Matrices[1])
-T_03_sym = tensorproduct(T_02_sym, Transformation_Matrices[2])
-T_04_sym = tensorproduct(T_03_sym, Transformation_Matrices[3])
-T_05_sym = tensorproduct(T_04_sym, Transformation_Matrices[4])
-print(T_02_sym)
-
-
-
 T_01_sym = sp.simplify(T_01_sym)
-T_02_sym = sp.simplify(T_02_sym)
-T_03_sym = sp.simplify(T_03_sym)
-T_04_sym = sp.simplify(T_04_sym)
-T_05_sym = sp.simplify(T_05_sym)
->>>>>>> ff8ec8040f22116792c10d19fe39a16d53a75ba5
 
+T_02_sym = tensorproduct(T_01_sym, Transformation_Matrices[1])
+T_02_sym = sp.simplify(T_02_sym)
+
+T_03_sym = tensorproduct(T_02_sym, Transformation_Matrices[2])
+T_03_sym = sp.simplify(T_03_sym)
+
+T_04_sym = tensorproduct(T_03_sym, Transformation_Matrices[3])
+T_04_sym = sp.simplify(T_04_sym)
+
+T_05_sym = tensorproduct(T_04_sym, Transformation_Matrices[4])
+T_05_sym = sp.simplify(T_05_sym)
     
 
 # Se o Método escolhido for 1

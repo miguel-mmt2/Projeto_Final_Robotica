@@ -1,26 +1,30 @@
-# Importar as principais bibliotecas:
-import numpy as np
-from numpy import  eye, matrix, array
 import sympy as sp
-
-
 from sympy import simplify, cos, sin, Array
 
 def MGH_DH(DH_Matrix):
     N_Links = DH_Matrix.shape[0]  # Número de Links
-    Tf = eye(4)
+    print("Número de Links:", N_Links)
 
-    T_aux = np.zeros()
+    # Inicializar a matriz de transformação acumulada como identidade simbólica
+    Tf = sp.eye(4)
+
+    # Lista para armazenar as transformações individuais
+    T_aux = [None] * N_Links
 
     for i in range(N_Links):
+        # Extrair os parâmetros DH da linha i
         theta, d, a, alpha = DH_Matrix[i, :]
-        T_aux[i] = Array([
+
+        # Matriz de transformação individual
+        T_aux[i] = sp.Matrix([
             [cos(theta), -sin(theta)*cos(alpha),  sin(theta)*sin(alpha), a*cos(theta)],
             [sin(theta),  cos(theta)*cos(alpha), -cos(theta)*sin(alpha), a*sin(theta)],
             [0,           sin(alpha),            cos(alpha),            d],
             [0,           0,                     0,                     1]
         ])
+
+        # Atualizar a matriz acumulada
         Tf = Tf * T_aux[i]
 
-    return T_aux, simplify(Tf)
 
+    return T_aux, Tf
