@@ -24,15 +24,13 @@ import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sympy
+import sympy as sp
 
 # Expressões Matemáticas:
 import math
 from numpy import eye, matrix
-from math import pi
-from math import sqrt
-from math import cos
-from math import sin
+from math import sqrt, cos, sin, pi
+
 
 
 
@@ -48,19 +46,19 @@ from xarm.wrapper import XArmAPI # Importar a API do Robô
 # ============ Conexão ao Robô ============
 
 # Configuração do ip do Robô:
-if len(sys.argv) >= 2:
-    ip = sys.argv[1]
-else:
-    try:
-        from configparser import ConfigParser
-        parser = ConfigParser()
-        parser.read('../robot.conf')
-        ip = parser.get('xArm', 'ip')
-    except:
-        ip = input('Please input the xArm ip address:')
-        if not ip:
-            print('input error, exit')
-            sys.exit(1)
+#if len(sys.argv) >= 2:
+#    ip = sys.argv[1]
+#else:
+#    try:
+#        from configparser import ConfigParser
+#        parser = ConfigParser()
+#        parser.read('../robot.conf')
+#        ip = parser.get('xArm', 'ip')
+#    except:
+#        ip = input('Please input the xArm ip address:')
+#        if not ip:
+#            print('input error, exit')
+#            sys.exit(1)
 
 
 
@@ -82,8 +80,8 @@ Lg = 61.5
 
 # ============ Setup do Robô ============
 
-UFactory_Lite = XArmAPI(ip)
-UFactory_Lite.motion_enable(enable=True)
+#UFactory_Lite = XArmAPI(ip)
+#UFactory_Lite.motion_enable(enable=True)
 #UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
 #UFactory_Lite.set_state(state=0)
 #UFactory_Lite.move_gohome(wait=True)          # Going to rest position 
@@ -161,17 +159,17 @@ alpha4=pi/2
 alpha5=-pi/2
 alpha6=0
 
-t1, t2, t3, t4, t5, t6 = sympy.symbols('t1 t2 t3 t4 t5 t6') 
+t1, t2, t3, t4, t5, t6 = sp.symbols('t1 t2 t3 t4 t5 t6') 
 
 
 # Matriz DH do Robô 
 
-DH_Matrix = np.matrix([t1+offset1, d1, a1, alpha1],
+DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
                       [t2+offset2, d2, a2, alpha2],
                       [t3+offset3, d3, a3, alpha3],
                       [t4+offset4, d4, a4, alpha4],
                       [t5+offset5, d5, a5, alpha5],
-                      [t6+offset6, d6, a6, alpha6])
+                      [t6+offset6, d6, a6, alpha6]])
 
 
 
@@ -179,7 +177,7 @@ DH_Matrix = np.matrix([t1+offset1, d1, a1, alpha1],
 # Confirm the Transformation Matrices
 
 [Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
-T_final = np.simplify(T_final)
+T_final = sp.simplify(T_final)
 
 print(Transformation_Matrices)
     
@@ -192,8 +190,8 @@ print(Transformation_Matrices)
 
 # ============ Fim dos Métodos ============
 
-UFactory_Lite.move_gohome(wait=True)
-UFactory_Lite.disconnect()
+#UFactory_Lite.move_gohome(wait=True)
+#UFactory_Lite.disconnect()
 
 
 
