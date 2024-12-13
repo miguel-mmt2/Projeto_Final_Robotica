@@ -302,7 +302,7 @@ while alpha_i < N_voltas*2*pi:
                                                 0,
                                                 0])
     
-    T_0G = UFactory_Lite.get_forward_kinematics(config_rads,input_is_radian=True, return_is_radian=True)
+    T_0G = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
     # Real position values
 
@@ -374,7 +374,7 @@ while alpha_i < N_voltas*2*pi:
     
 
 
-    aux_config = config_rads + (np.array([vel(1), vel(2), vel(3), vel(4), vel(5), vel(6)]) * iterationTime)
+    aux_config = config_rads + (np.array([vel[0], vel[1], vel[2], vel[3], vel[4], vel[5]]) * iterationTime)
     
     alpha = alpha + alpha_velocity * iterationTime
 
