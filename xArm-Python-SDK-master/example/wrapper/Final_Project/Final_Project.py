@@ -186,7 +186,7 @@ Transformation_Matrices[3] = sp.simplify(Transformation_Matrices[3])  # T34
 Transformation_Matrices[4] = sp.simplify(Transformation_Matrices[4])  # T45
 Transformation_Matrices[5] = sp.simplify(Transformation_Matrices[5])  # T56
 
-
+print(Transformation_Matrices[5])
 
 # Transformation Matrices
 T_01_sym = Transformation_Matrices[0]
@@ -194,6 +194,7 @@ T_02_sym = tensorproduct(T_01_sym, Transformation_Matrices[1])
 T_03_sym = tensorproduct(T_02_sym, Transformation_Matrices[2])
 T_04_sym = tensorproduct(T_03_sym, Transformation_Matrices[3])
 T_05_sym = tensorproduct(T_04_sym, Transformation_Matrices[4])
+print(T_02_sym)
 
 
 
