@@ -36,6 +36,7 @@ from math import cos
 from math import sin
 
 
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI # Importar a API do Robô
@@ -125,6 +126,9 @@ print(f"\nOs valores são: C = [{C[0]}, {C[1]}, {C[2]}] e r = {r}")
 # Conversão dos valores de C e r para double:
 C = [float(C[0]), float(C[1]), float(C[2])]
 r = float(r)
+
+
+
 
 
 # Jacobiano:
