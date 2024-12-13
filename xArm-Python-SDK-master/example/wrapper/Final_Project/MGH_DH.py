@@ -1,10 +1,10 @@
 # Importar as principais bibliotecas:
 import numpy as np
-from numpy import  eye, matrix, array
+from numpy import  matrix, array
 import sympy as sp
 
 
-from sympy import simplify, cos, sin, Array
+from sympy import simplify, cos, sin, Array, Matrix, eye
 
 def MGH_DH(DH_Matrix):
     N_Links = DH_Matrix.shape[0]  # Número de Links
@@ -19,7 +19,7 @@ def MGH_DH(DH_Matrix):
             [0,           sin(alpha),            cos(alpha),            d],
             [0,           0,                     0,                     1]
         ])
-        Tf = Tf * T_aux[i]
-
-    return T_aux, simplify(Tf)
+        Tf = Tf * Matrix(T_aux[i])
+        
+    return T_aux,Tf
 

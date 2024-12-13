@@ -28,8 +28,8 @@ import sympy as sp
 
 # Expressões Matemáticas:
 import math
-from sympy import tensorproduct,shape
-from numpy import eye, matrix, round
+from sympy import tensorproduct,shape, DotProduct, Matrix, pprint
+from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
 
@@ -172,10 +172,8 @@ DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
 
 
 # Confirm the Transformation Matrices
-
 [Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
-T_final = sp.simplify(T_final)
-
+#T_final = sp.simplify(T_final, rational=False)
 
 
 # Simplify das matrizes
@@ -186,25 +184,24 @@ Transformation_Matrices[3] = sp.simplify(Transformation_Matrices[3])  # T34
 Transformation_Matrices[4] = sp.simplify(Transformation_Matrices[4])  # T45
 Transformation_Matrices[5] = sp.simplify(Transformation_Matrices[5])  # T56
 
-print(Transformation_Matrices[5])
 
 # Transformation Matrices
-T_01_sym = Transformation_Matrices[0]
-T_02_sym = tensorproduct(T_01_sym, Transformation_Matrices[1])
-T_03_sym = tensorproduct(T_02_sym, Transformation_Matrices[2])
-T_04_sym = tensorproduct(T_03_sym, Transformation_Matrices[3])
-T_05_sym = tensorproduct(T_04_sym, Transformation_Matrices[4])
-print(T_02_sym)
+T_01_sym = Matrix(Transformation_Matrices[0])
+T_02_sym = sp.Mul(T_01_sym, Matrix(Transformation_Matrices[1]), evaluate=False)
+T_03_sym = sp.Mul(T_02_sym, Matrix(Transformation_Matrices[2]), evaluate=False)
+T_04_sym = sp.Mul(T_03_sym, Matrix(Transformation_Matrices[3]), evaluate=False)
+T_05_sym = sp.Mul(T_04_sym, Matrix(Transformation_Matrices[4]), evaluate=False)
 
 
 
-T_01_sym = sp.simplify(T_01_sym)
-T_02_sym = sp.simplify(T_02_sym)
-T_03_sym = sp.simplify(T_03_sym)
-T_04_sym = sp.simplify(T_04_sym)
-T_05_sym = sp.simplify(T_05_sym)
+# Simplified Transformation Matrices
+#T_01_sym = sp.simplify(T_01_sym)
+#T_02_sym = sp.simplify(T_02_sym)
+#T_03_sym = sp.simplify(T_03_sym)
+#T_04_sym = sp.simplify(T_04_sym)
+#T_05_sym = sp.simplify(T_05_sym)
 
-    
+pprint(T_05_sym)
 
 # Se o Método escolhido for 1
 
