@@ -163,7 +163,6 @@ t1, t2, t3, t4, t5, t6 = sp.symbols('t1 t2 t3 t4 t5 t6')
 
 
 # Matriz DH do Robô 
-
 DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
                       [t2+offset2, d2, a2, alpha2],
                       [t3+offset3, d3, a3, alpha3],
@@ -172,14 +171,23 @@ DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
                       [t6+offset6, d6, a6, alpha6]])
 
 
-
-
 # Confirm the Transformation Matrices
-
 [Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
 T_final = sp.simplify(T_final)
 
-print(Transformation_Matrices)
+print(T_final)
+P_0G = T_final[:2, 3]
+print(P_0G)
+
+Jac_v = sp.Array[sp.diff(P_0G[1], t1),
+                 sp.diff(P_0G[1], t2),                
+                 sp.diff(P_0G[1], t3),                
+                 sp.diff(P_0G[1], t4), 
+                 sp.diff(P_0G[1], t5),  
+                 sp.diff(P_0G[1], t6)]
+
+print(Jac_v)
+
     
 
 # Se o Método escolhido for 1

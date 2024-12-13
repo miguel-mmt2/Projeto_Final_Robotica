@@ -9,7 +9,8 @@ from sympy import simplify, cos, sin, Array
 def MGH_DH(DH_Matrix):
     N_Links = DH_Matrix.shape[0]  # Número de Links
     Tf = eye(4)
-    T_aux = [None] * N_Links
+
+    T_aux = np.zeros()
 
     for i in range(N_Links):
         theta, d, a, alpha = DH_Matrix[i, :]
