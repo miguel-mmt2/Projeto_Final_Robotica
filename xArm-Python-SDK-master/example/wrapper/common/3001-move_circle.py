@@ -46,22 +46,22 @@ arm.set_state(state=0)
 
 arm.move_gohome(wait=True)
 
-poses = [
-    [300,  0,   100, -180, 0, 0],
-    [300,  100, 100, -180, 0, 0],
-    [400,  100, 100, -180, 0, 0],
-    [400, -100, 100, -180, 0, 0],
-    [300,  0,   300, -180, 0, 0]
-]
+# poses = [
+#     [300,  0,   100, -180, 0, 0],
+#     [300,  100, 100, -180, 0, 0],
+#     [400,  100, 100, -180, 0, 0],
+#     [400, -100, 100, -180, 0, 0],
+#     [300,  0,   300, -180, 0, 0]
+# ]
 
-ret = arm.set_position(*poses[0], speed=50, mvacc=100, wait=False)
-print('set_position, ret: {}'.format(ret))
+# ret = arm.set_position(*poses[0], speed=50, mvacc=100, wait=False)
+# print('set_position, ret: {}'.format(ret))
 
-ret = arm.move_circle(pose1=poses[1], pose2=poses[2], percent=50, speed=200, mvacc=1000, wait=True)
-print('move_circle, ret: {}'.format(ret))
+# ret = arm.move_circle(pose1=poses[1], pose2=poses[2], percent=50, speed=200, mvacc=1000, wait=True)
+# print('move_circle, ret: {}'.format(ret))
 
-ret = arm.move_circle(pose1=poses[3], pose2=poses[4], percent=200, speed=200, mvacc=1000, wait=True)
-print('move_circle, ret: {}'.format(ret))
+# ret = arm.move_circle(pose1=poses[3], pose2=poses[4], percent=200, speed=200, mvacc=1000, wait=True)
+# print('move_circle, ret: {}'.format(ret))
 
 arm.move_gohome(wait=True)
 arm.disconnect()

@@ -25,15 +25,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Expressões Simbólicas:
-import sympy
-
 # Expressões Matemáticas:
 import math
 from math import pi
 from math import sqrt
 from math import cos
 from math import sin
+
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -63,9 +61,6 @@ else:
 
 # ============ Variáveis ============
 
-# Criação das Variaveis simbólicas:
-t1, t2, t3, t4, t5, t6 = sympy.symbols('t1 t2 t3 t4 t5 t6')
-
 # Utiizando o modelo Modificado de DH:
 Roll_x = pi/2
 Pitch_y = -pi/2
@@ -74,14 +69,11 @@ Yaw_z = pi/2
 alpha_velocity = pi/2
 alpha = 0
 
-C = [250, 250, 250] # Inicialização do Centro
-r = 100  # Incialização do raio
+C = [100, 100, 100] # Inicialização do Centro
+r = 20  # Incialização do raio
 
 Lg = 61.5
 
-# Constantes do Controlador PI
-Kp = 0.9;     
-Ki = 0.04;   
 
 # ============ Setup do Robô ============
 
@@ -91,6 +83,9 @@ UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mo
 UFactory_Lite.set_state(state=0)
 UFactory_Lite.move_gohome(wait=True)          # Going to rest position 
 
+
+
+# ============ Setup do Robô ============
 
 
 
@@ -127,52 +122,22 @@ C = [float(C[0]), float(C[1]), float(C[2])]
 r = float(r)
 
 
-# Jacobiano:
-
-
-cartesian_velocities = np.array([
-    0,
-    -r * np.sin(alpha) * alpha_velocity,
-    r * (np.cos(alpha)**2 - np.sin(alpha)**2) * alpha_velocity,
-    0,
-    0,
-    0
-])
 
 
 
 
-N = 2
-i = 1
-
-# ---> Se o Método escolhido for 1
-while (i < N): 
-
-    p_x = C[0] - Lg     # Compensação por um dos robôs não ter Gripper
-    p_y = C[1] + r*cos(alpha)
-    p_z = C[2] + r*cos(alpha) * sin(alpha)
-
-
-    # Set do robô na posição de começo do robô na figura, c/ compensação da posição do Gripper
-    # Set do Gripper - Lg no ponnto de referência do circuito a fazer 
-
-    UFactory_Lite.set_tool_position(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, speed = alpha_velocity, wait = True, is_radian = True)
     
 
-    # Cinemática Inversa para a 1ª posição do Robô
-    New_Home_figure = UFactory_Lite.get_inverse_kinematics(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, input_is_radian = True, return_is_radian = True) 
+# Se o Método escolhido for 1
 
-    UFactory_Lite.get_dh_params()
 
-    i = i+1
+# Se o Método escolhido for 2
+
 
 # ============ Fim dos Métodos ============
 
-    UFactory_Lite.move_gohome(wait=True)
-    UFactory_Lite.disconnect()
-
-
-
+UFactory_Lite.move_gohome(wait=True)
+UFactory_Lite.disconnect()
 
 
 
