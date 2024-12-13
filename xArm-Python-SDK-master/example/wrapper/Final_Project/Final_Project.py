@@ -201,7 +201,7 @@ T_05_sym = sp.Mul(T_04_sym, Matrix(Transformation_Matrices[4]), evaluate=False)
 # Jacobiano
 
 P_0G = T_final[0:3,3]
-print(P_0G.shape)
+#print(P_0G.shape)
 #pprint(P_0G)
 
 
@@ -213,6 +213,8 @@ Jac_v = sp.Array([
     [sp.diff(P_0G[2], t1), sp.diff(P_0G[2], t2), sp.diff(P_0G[2], t3), sp.diff(P_0G[2], t4), sp.diff(P_0G[2], t5), sp.diff(P_0G[2], t6)]
 ])
 #pprint(Jac_v)
+
+
 # Jacobiano de velocidades angulares
 Jac_w = sp.Array([
     [0, T_01_sym[0, 2], T_02_sym[0, 2], T_03_sym[0, 2], T_04_sym[0, 2], T_05_sym[0, 2]],
@@ -220,10 +222,14 @@ Jac_w = sp.Array([
     [1 ,T_01_sym[2, 2], T_02_sym[2, 2], T_03_sym[2, 2], T_04_sym[2, 2], T_05_sym[2, 2]]
 ])
 
-print(Jac_w.shape)
-print(Jac_v.shape)
+#pprint(Jac_w.shape)
+#pprint(Jac_v.shape)
 
+#pprint(Jac_w)
 
+# Jacobiano Completo
+J0R = sp.Array([Jac_v,
+                Jac_w])
 
 
 
