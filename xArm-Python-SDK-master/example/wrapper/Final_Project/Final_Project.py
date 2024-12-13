@@ -24,6 +24,7 @@ import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import sympy
 
 # Expressões Matemáticas:
 import math
@@ -122,6 +123,51 @@ C = [float(C[0]), float(C[1]), float(C[2])]
 r = float(r)
 
 
+##############   Parâmetros DH do Robô      #####################
+
+# Offset's
+offset1=0
+offset2=-pi/2
+offset3=-pi/2
+offset4=0
+offset5=0
+offset6=0
+
+# D's
+d1=243.3
+d2=0
+d3=0
+d4=227.6
+d5=0
+d6=61.5
+
+# A's
+a1=0
+a2=200
+a3=87
+a4=0
+a5=0
+a6=0
+
+# Alphas 
+alpha1=-pi/2
+alpha2=pi
+alpha3=pi/2
+alpha4=pi/2
+alpha5=-pi/2
+alpha6=0
+
+t1, t2, t3, t4, t5, t6 = sympy.symbols('t1 t2 t3 t4 t5 t6') 
+
+
+# Matriz DH do Robô 
+
+DH_Matrix = np.matrix([t1+offset1, d1, a1, alpha1],
+                      [t2+offset2, d2, a2, alpha2],
+                      [t3+offset3, d3, a3, alpha3],
+                      [t4+offset4, d4, a4, alpha4],
+                      [t5+offset5, d5, a5, alpha5]
+                      [t6+offset6, d6, a6, alpha6])
 
 
 
