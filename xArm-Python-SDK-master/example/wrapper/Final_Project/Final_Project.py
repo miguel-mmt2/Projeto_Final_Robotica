@@ -28,7 +28,7 @@ import sympy as sp
 
 # Expressões Matemáticas:
 import math
-from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Inverse
+from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Inverse, Subs
 from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
@@ -294,6 +294,7 @@ N_voltas = 1
 while alpha_i < N_voltas*2*pi:
 
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+    J0R_red_subs = Subs(J0R,[t1, t2, t3, t4, t5, t6], config_rads)
     cartisian_velocities = np.array([           0,
                     -r*sin(alpha_i)*alpha_velocity,
     r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
@@ -305,12 +306,12 @@ while alpha_i < N_voltas*2*pi:
 
     # Real position values
 
-    py_g_r = T_0G[2]
-    pz_g_r = T_0G[3]
+    py_g_r = T_0G[1]
+    pz_g_r = T_0G[2]
 
 
     error_y = py_g_i - py_g_r
-    errodr_z = pz_g_i - pz_g_r
+    error_z = pz_g_i - pz_g_r
 
     vel = prop_vel = Inverse(J0R_red_subs) * cartisian_velocities
     # velocidade de compensação para parte proporcional
@@ -359,8 +360,9 @@ while alpha_i < N_voltas*2*pi:
 while alpha_i < N_voltas*2*pi:
 
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+    J0R_red_subs = Subs(J0R,[t1, t2, t3, t4, t5, t6], config_rads)
     cartisian_velocities = np.array([           0,
-                    -r*sin(alpha_i)*alpha_velocity,
+                        -r*sin(alpha_i)*alpha_velocity,
     r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
                                                 0,
                                                 0,
@@ -378,7 +380,7 @@ while alpha_i < N_voltas*2*pi:
 
     #UFactory_Lite6.plot(config_rads,'view','y')
 
-    UFactory_Lite.vc_set_joint_velocity(vel,is_radian=True)
+    UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
 
     config_rads = aux_config
       
