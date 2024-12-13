@@ -1,6 +1,6 @@
 # Importar as principais bibliotecas:
 import numpy as np
-from numpy import cos, sin, eye, Matrix
+from numpy import cos, sin, eye, matrix
 
 from sympy import simplify
 
@@ -11,7 +11,7 @@ def MGH_DH(DH_Matrix):
 
     for i in range(N_Links):
         theta, d, a, alpha = DH_Matrix[i, :]
-        T_aux[i] = Matrix([
+        T_aux[i] = matrix([
             [cos(theta), -sin(theta)*cos(alpha),  sin(theta)*sin(alpha), a*cos(theta)],
             [sin(theta),  cos(theta)*cos(alpha), -cos(theta)*sin(alpha), a*sin(theta)],
             [0,           sin(alpha),            cos(alpha),            d],

@@ -28,11 +28,15 @@ import sympy
 
 # Expressões Matemáticas:
 import math
+from numpy import eye, matrix
 from math import pi
 from math import sqrt
 from math import cos
 from math import sin
 
+
+
+from MGH_DH import MGH_DH
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -78,11 +82,11 @@ Lg = 61.5
 
 # ============ Setup do Robô ============
 
-UFactory_Lite = XArmAPI(ip)
-UFactory_Lite.motion_enable(enable=True)
-UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
-UFactory_Lite.set_state(state=0)
-UFactory_Lite.move_gohome(wait=True)          # Going to rest position 
+#UFactory_Lite = XArmAPI(ip)
+#UFactory_Lite.motion_enable(enable=True)
+#UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
+#UFactory_Lite.set_state(state=0)
+#UFactory_Lite.move_gohome(wait=True)          # Going to rest position 
 
 
 
@@ -95,19 +99,19 @@ UFactory_Lite.move_gohome(wait=True)          # Going to rest position
 # Ciclo para escolher o Modo de Operação:
 metodo = "0"
 
-while (metodo != "1" and metodo !="2"):
-    os.system('cls' if os.name == 'nt' else 'clear') # Limpa o Terminal
+#while (metodo != "1" and metodo !="2"):
+ #   os.system('cls' if os.name == 'nt' else 'clear') # Limpa o Terminal
 
-    print("===================================")
-    print("| [1] - Controlo em Malha Fechada |")
-    print("| [2] - Por Definir               |")
-    print("===================================")
+ #   print("===================================")
+ #   print("| [1] - Controlo em Malha Fechada |")
+ #  print("| [2] - Por Definir               |")
+  #  print("===================================")
 
-    metodo = input("Opção: ")
+#    metodo = input("Opção: ")
 
 
 # Ciclo para escolher os valores de C e r:
-while not (C[0].isdecimal() and C[1].isdecimal() and C[2].isdecimal()):
+while not (C[0] and C[1] and C[2]):
     os.system('cls' if os.name == 'nt' else 'clear')  # Limpa o terminal
 
     print("Introduza valores numéricos Centro e o Raio")
@@ -166,12 +170,18 @@ DH_Matrix = np.matrix([t1+offset1, d1, a1, alpha1],
                       [t2+offset2, d2, a2, alpha2],
                       [t3+offset3, d3, a3, alpha3],
                       [t4+offset4, d4, a4, alpha4],
-                      [t5+offset5, d5, a5, alpha5]
+                      [t5+offset5, d5, a5, alpha5],
                       [t6+offset6, d6, a6, alpha6])
 
 
 
 
+# Confirm the Transformation Matrices
+
+[Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
+T_final = np.simplify(T_final)
+
+print(Transformation_Matrices)
     
 
 # Se o Método escolhido for 1
