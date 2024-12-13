@@ -82,8 +82,8 @@ Lg = 61.5
 
 # ============ Setup do Robô ============
 
-#UFactory_Lite = XArmAPI(ip)
-#UFactory_Lite.motion_enable(enable=True)
+UFactory_Lite = XArmAPI(ip)
+UFactory_Lite.motion_enable(enable=True)
 #UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
 #UFactory_Lite.set_state(state=0)
 #UFactory_Lite.move_gohome(wait=True)          # Going to rest position 
