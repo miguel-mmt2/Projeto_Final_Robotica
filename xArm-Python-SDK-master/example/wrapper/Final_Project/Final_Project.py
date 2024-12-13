@@ -170,16 +170,16 @@ DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
 
 # Confirm the Transformation Matrices
 [Transformation_Matrices,T_final] = MGH_DH(DH_Matrix)
-#T_final = sp.simplify(T_final, rational=False)
+T_final = sp.nsimplify(T_final, tolerance=1e-5)
 
 
 # Simplify das matrizes
-Transformation_Matrices[0] = sp.simplify(Transformation_Matrices[0])  # T01
-Transformation_Matrices[1] = sp.simplify(Transformation_Matrices[1])  # T12
-Transformation_Matrices[2] = sp.simplify(Transformation_Matrices[2])  # T23
-Transformation_Matrices[3] = sp.simplify(Transformation_Matrices[3])  # T34
-Transformation_Matrices[4] = sp.simplify(Transformation_Matrices[4])  # T45
-Transformation_Matrices[5] = sp.simplify(Transformation_Matrices[5])  # T56
+Transformation_Matrices[0] = sp.nsimplify(Transformation_Matrices[0],tolerance=1e-5)  # T01
+Transformation_Matrices[1] = sp.nsimplify(Transformation_Matrices[1],tolerance=1e-5)  # T12
+Transformation_Matrices[2] = sp.nsimplify(Transformation_Matrices[2],tolerance=1e-5)  # T23
+Transformation_Matrices[3] = sp.nsimplify(Transformation_Matrices[3],tolerance=1e-5)  # T34
+Transformation_Matrices[4] = sp.nsimplify(Transformation_Matrices[4],tolerance=1e-5)  # T45
+Transformation_Matrices[5] = sp.nsimplify(Transformation_Matrices[5],tolerance=1e-5)  # T56
 
 
 # Transformation Matrices
@@ -190,7 +190,6 @@ T_04_sym = sp.Mul(T_03_sym, Matrix(Transformation_Matrices[3]), evaluate=False)
 T_05_sym = sp.Mul(T_04_sym, Matrix(Transformation_Matrices[4]), evaluate=False)
 
 
-
 # Simplified Transformation Matrices
 #T_01_sym = sp.simplify(T_01_sym)
 #T_02_sym = sp.simplify(T_02_sym)
@@ -198,7 +197,27 @@ T_05_sym = sp.Mul(T_04_sym, Matrix(Transformation_Matrices[4]), evaluate=False)
 #T_04_sym = sp.simplify(T_04_sym)
 #T_05_sym = sp.simplify(T_05_sym)
 
-pprint(T_05_sym)
+
+# Jacobiano
+
+P_0G = T_final[0:3,3]
+#pprint(P_0G)
+
+
+
+# Jacobiano de velocidades lineares
+Jac_v = sp.Array([sp.diff(P_0G, t1)], [sp.diff(P_0G, t2)],[sp.diff(P_0G, t3)],[sp.diff(P_0G, t4)],[sp.diff(P_0G, t5)], [sp.diff(P_0G, t6)])
+#pprint(Jac_v)
+# Jacobiano de velocidades angulares
+Jac_w = sp.Array([[0, 0, 1],
+                  [T_01_sym[0:3,2]],
+                  [T_02_sym[0:3,2]],
+                  [T_03_sym[0:3,2]],
+                  [T_04_sym[0:3,2]],
+                  [T_05_sym[0:3,2]],
+                  ])
+
+
 
 # Se o Método escolhido for 1
 
