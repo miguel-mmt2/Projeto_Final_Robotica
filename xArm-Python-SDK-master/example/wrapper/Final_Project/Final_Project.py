@@ -160,15 +160,12 @@ t1, t2, t3, t4, t5, t6 = sp.symbols('t1 t2 t3 t4 t5 t6')
 
 
 # Matriz DH do Robô 
-
 DH_Matrix = sp.Array([[t1+offset1, d1, a1, alpha1],
                       [t2+offset2, d2, a2, alpha2],
                       [t3+offset3, d3, a3, alpha3],
                       [t4+offset4, d4, a4, alpha4],
                       [t5+offset5, d5, a5, alpha5],
                       [t6+offset6, d6, a6, alpha6]])
-
-
 
 
 # Confirm the Transformation Matrices
