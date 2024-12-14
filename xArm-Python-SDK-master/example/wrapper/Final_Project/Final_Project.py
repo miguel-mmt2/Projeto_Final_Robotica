@@ -33,6 +33,16 @@ from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
 
+# Funções auxiliares:
+import functions
+from functions import clc
+from functions import opcoes_menu
+from functions import constantes_infinito
+from functions import constantes_elipse
+from functions import constantes_circunferencia
+from functions import Compute_cartesian_velocity
+from functions import Compute_Inical_Position
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -70,8 +80,11 @@ alpha_velocity = pi/2
 alpha = 0
 iterationTime = 0.1
 
-C = [100, 100, 100] # Inicialização do Centro
-r = 20  # Incialização do raio
+# -> Inicialização das Constantes das Equações: 
+C = ["Cx", "Cy", "Cz"] 
+r = "r"  
+r_a = "r_a"  
+r_b = "r_b" 
 
 Lg = 61.5
 
@@ -89,46 +102,38 @@ UFactory_Lite = XArmAPI(ip)
 
 
 
-# ============ Setup do Robô ============
+# ============ MENU DE OPÇÕES - Utilização dos Métodos ============
+# -> Menu de Opções:
+opcao, metodo = opcoes_menu()
+
+# -> Atribuição de valores às constantes das Equações:
+if (opcao=="1" or opcao=="2"):
+    C[0], C[1], C[2], r = constantes_infinito(C, r)
+
+    C = [float(C[0]), float(C[1]), float(C[2])] # Conversão para float
+    r = float(r)
+
+elif (opcao=="3" or opcao=="4"):
+    C[0], C[1], C[2], r_a, r_b = constantes_elipse(C, r_a, r_b)
+
+    C = [float(C[0]), float(C[1]), float(C[2])] # Conversão para float
+    r_a = float(r_a)
+    r_b = float(r_b)
+
+elif (opcao=="5" or opcao=="6"):
+    C[0], C[1], C[2], r = constantes_circunferencia(C, r)
+
+    C = [float(C[0]), float(C[1]), float(C[2])] # Conversão para float
+    r = float(r)    
 
 
 
-# ============ Utilização dos Métodos ============
 
-# Ciclo para escolher o Modo de Operação:
-metodo = "0"
-
-#while (metodo != "1" and metodo !="2"):
- #   os.system('cls' if os.name == 'nt' else 'clear') # Limpa o Terminal
-
- #   print("===================================")
- #   print("| [1] - Controlo em Malha Fechada |")
- #  print("| [2] - Por Definir               |")
-  #  print("===================================")
-
-#    metodo = input("Opção: ")
-
-
-# Ciclo para escolher os valores de C e r:
-while not (C[0] and C[1] and C[2]):
-    os.system('cls' if os.name == 'nt' else 'clear')  # Limpa o terminal
-
-    print("Introduza valores numéricos Centro e o Raio")
-    C[0] = input("Cx: ")
-    C[1] = input("Cy: ")
-    C[2] = input("Cz: ")
-    r = input("Raio: ")
-
-print(f"\nOs valores são: C = [{C[0]}, {C[1]}, {C[2]}] e r = {r}")
-
-# Conversão dos valores de C e r para double:
-C = [float(C[0]), float(C[1]), float(C[2])]
-r = float(r)
 
 
 ##############   Parâmetros DH do Robô      #####################
 
-# Offset's
+# offset's
 offset1=0
 offset2=-pi/2
 offset3=-pi/2
@@ -136,7 +141,7 @@ offset4=0
 offset5=0
 offset6=0
 
-# D's
+# d's
 d1=243.3
 d2=0
 d3=0
@@ -144,7 +149,7 @@ d4=227.6
 d5=0
 d6=61.5
 
-# A's
+# a's
 a1=0
 a2=200
 a3=87
@@ -152,7 +157,7 @@ a4=0
 a5=0
 a6=0
 
-# Alphas 
+# alphas 
 alpha1=-pi/2
 alpha2=pi
 alpha3=pi/2
@@ -194,44 +199,26 @@ T_04_sym = sp.Mul(T_03_sym, Matrix(Transformation_Matrices[3]), evaluate=False)
 T_05_sym = sp.Mul(T_04_sym, Matrix(Transformation_Matrices[4]), evaluate=False)
 
 
-# Simplified Transformation Matrices
-#T_01_sym = sp.simplify(T_01_sym)
-#T_02_sym = sp.simplify(T_02_sym)
-#T_03_sym = sp.simplify(T_03_sym)
-#T_04_sym = sp.simplify(T_04_sym)
-#T_05_sym = sp.simplify(T_05_sym)
 
+# ============ Cálculo do Jacobiano em Simbólico ============
+P_0G = T_final[0:3,3] # Posição do Gripper 
 
-# Jacobiano
-
-P_0G = T_final[0:3,3]
-#print(P_0G.shape)
-#pprint(P_0G)
-
-
-
-# Jacobiano de velocidades lineares
+# -> Jacobiano de velocidades lineares
 Jac_v = sp.Array([
     [sp.diff(P_0G[0], t1), sp.diff(P_0G[0], t2), sp.diff(P_0G[0], t3), sp.diff(P_0G[0], t4), sp.diff(P_0G[0], t5), sp.diff(P_0G[0], t6)],
     [sp.diff(P_0G[1], t1), sp.diff(P_0G[1], t2), sp.diff(P_0G[1], t3), sp.diff(P_0G[1], t4), sp.diff(P_0G[1], t5), sp.diff(P_0G[1], t6)],
     [sp.diff(P_0G[2], t1), sp.diff(P_0G[2], t2), sp.diff(P_0G[2], t3), sp.diff(P_0G[2], t4), sp.diff(P_0G[2], t5), sp.diff(P_0G[2], t6)]
 ])
-#pprint(Jac_v)
 
-
-# Jacobiano de velocidades angulares
+#  ->Jacobiano de velocidades angulares
 Jac_w = sp.Array([
     [0, T_01_sym[0, 2], T_02_sym[0, 2], T_03_sym[0, 2], T_04_sym[0, 2], T_05_sym[0, 2]],
     [0, T_01_sym[1, 2], T_02_sym[1, 2], T_03_sym[1, 2], T_04_sym[1, 2], T_05_sym[1, 2]],
     [1 ,T_01_sym[2, 2], T_02_sym[2, 2], T_03_sym[2, 2], T_04_sym[2, 2], T_05_sym[2, 2]]
 ])
 
-#pprint(Jac_w.shape)
-#pprint(Jac_v.shape)
 
-#pprint(Jac_w)
-
-# Jacobiano Completo
+# -> Jacobiano Completo
 J0R = sp.Array([[Jac_v[0,0], Jac_v[0,1], Jac_v[0,2], Jac_v[0,3], Jac_v[0,4], Jac_v[0,5]], 
                 [Jac_v[1,0], Jac_v[1,1], Jac_v[1,2], Jac_v[1,3], Jac_v[1,4], Jac_v[1,5]],
                 [Jac_v[2,0], Jac_v[2,1], Jac_v[2,2], Jac_v[2,3], Jac_v[2,4], Jac_v[2,5]], 
@@ -242,25 +229,17 @@ J0R = sp.Array([[Jac_v[0,0], Jac_v[0,1], Jac_v[0,2], Jac_v[0,3], Jac_v[0,4], Jac
 
 J0R = sp.nsimplify(J0R, tolerance = 1e-5)
 
-#pprint(J0R.shape)
-#pprint(J0R)
 
 
-# Defining the cartisian velocities
-cartisian_velocities = np.array([           0,
-                 -r*sin(alpha)*alpha_velocity,
- r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0])
+# ============ Definição das velocidades Cartesianas ============
+# -> Cálculo das velocidades cartesianas:
+cartesian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha, alpha_velocity)
 
 
 
-# Definição da posição inicial
-
-p_x = C[0]                               #  Compensação por um dos robôs não ter Gripper
-p_y = C[1] + r * cos(alpha)
-p_z = C[2] + r * cos(alpha) * sin(alpha)
+# ============ Definição da Posição Inicial ============
+# -> Cálculo da Posição Inical:
+p_x, p_y, p_z = Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha)
 
 # Get the joint angles for initial position
 Pos_ini_angles=UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z],input_is_radian=True, return_is_radian=True)
@@ -268,6 +247,7 @@ config_rads = Pos_ini_angles
 
 config_rads = UFactory_Lite.set_tool_position([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], speed = alpha_velocity, wait = True, is_radian = True)
 UFactory_Lite.set_mode(4) # modo de velocidades
+
 
 
 ###########################   Start Section  ######################

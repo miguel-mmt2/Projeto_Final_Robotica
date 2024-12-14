@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Importar as principais bibliotecas:
 import numpy as np
 from numpy import  matrix, array
