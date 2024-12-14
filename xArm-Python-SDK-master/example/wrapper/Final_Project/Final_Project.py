@@ -324,7 +324,7 @@ while alpha_i < N_voltas*2*pi:
 
 
      # velocidade de erro proporcional
-    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])~
+    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])
     
     # veocidrade de erro integrativo
     vel_integrative = Inverse(J0R_red_subs) * sp.Array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0])
