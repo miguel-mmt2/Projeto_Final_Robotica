@@ -280,8 +280,8 @@ pprint(T_0G)
 py_g_i = T_0G[2]
 pz_g_i = T_0G[3]
 
-alpha_i = alpha + alpha_velocity * iterationTime
-
+#alpha_i = alpha + alpha_velocity * iterationTime
+alpha_i = alpha
 
 # Variables for PI controller
 integrative_error_vy = 0
@@ -324,7 +324,8 @@ while alpha_i < N_voltas*2*pi:
 
 
      # velocidade de erro proporcional
-    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])
+    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])~
+    
     # veocidrade de erro integrativo
     vel_integrative = Inverse(J0R_red_subs) * sp.Array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0])
 
