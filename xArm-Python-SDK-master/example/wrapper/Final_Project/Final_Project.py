@@ -257,8 +257,8 @@ T_0G = UFactory_Lite.get_forward_kinematics(Pos_ini_angles,input_is_radian=True,
 
 pprint(T_0G)
 
-py_g_i = T_0G[2]
-pz_g_i = T_0G[3]
+py_g_i = T_0G[1]
+pz_g_i = T_0G[2]
 
 #alpha_i = alpha + alpha_velocity * iterationTime
 alpha_i = alpha
