@@ -241,11 +241,12 @@ cartesian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha, alp
 # -> Cálculo da Posição Inical:
 p_x, p_y, p_z = Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha)
 
-# Get the joint angles for initial position
-Pos_ini_angles=UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z],input_is_radian=True, return_is_radian=True)
+# -> Cálculo da Cinemática Inversa:
+Pos_ini_angles = UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], input_is_radian=True, return_is_radian=True)
 config_rads = Pos_ini_angles
 
-config_rads = UFactory_Lite.set_tool_position([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], speed = alpha_velocity, wait = True, is_radian = True)
+# -> Coloca o Robô na posição Inicial:
+config_rads = UFactory_Lite.set_tool_position([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], speed=alpha_velocity, wait=True, is_radian=True)
 UFactory_Lite.set_mode(4) # modo de velocidades
 
 
