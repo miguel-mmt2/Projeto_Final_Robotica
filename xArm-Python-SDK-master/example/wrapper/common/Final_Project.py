@@ -42,7 +42,7 @@ from functions import constantes_elipse
 from functions import constantes_circunferencia
 from functions import Compute_cartesian_velocity
 from functions import Compute_Inical_Position
-
+from functions import Compute_Roll_Pitch_Yaw
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -71,10 +71,6 @@ else:
 
 # ============ Variáveis ============
 
-# Utiizando o modelo Modificado de DH:
-Roll_x = pi/2
-Pitch_y = -pi/2
-Yaw_z = pi/2
 
 alpha_velocity = pi/2
 alpha = 0
@@ -128,7 +124,7 @@ elif (opcao=="5" or opcao=="6"):
 
 
 
-
+Roll_x, Pitch_y, Yaw_z = Compute_Roll_Pitch_Yaw(opcao)
 
 
 ##############   Parâmetros DH do Robô      #####################
@@ -290,13 +286,16 @@ while alpha_i < N_voltas*2*pi:
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
     J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
    
-    cartisian_velocities = np.array([           0,
-                    -r*sin(alpha_i)*alpha_velocity,
-    r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
-                                                0,
-                                                0,
-                                                0])
-    
+    # cartisian_velocities = np.array([           0,
+    #                 -r*sin(alpha_i)*alpha_velocity,
+    # r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
+    #                                             0,
+    #                                             0,
+    #                                             0])
+
+# Equação da Circunferência
+    cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
+
     T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
     # Real position values

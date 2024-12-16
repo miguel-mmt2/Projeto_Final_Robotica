@@ -161,6 +161,56 @@ def Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha, alpha_velocity):
 
 
 """
+    Esta função retorna as respetivas velocidades cartesianas com base na Equação
+"""
+def Compute_cartesian_velocity_ideal(opcao, r, r_a, r_b, alpha, alpha_velocity):
+    if (opcao == "1"): # Equação do Infinito
+        cartesian_velocities = np.array([   -r*sin(alpha)*alpha_velocity,
+                                            r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0,
+                                            0])
+    elif(opcao == "2"): # Equação do Infinito
+        cartesian_velocities = np.array([   0,
+                                            -r*sin(alpha)*alpha_velocity,
+                                            r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0])
+    elif(opcao == "3"): # Equação da Elipse
+        cartesian_velocities = np.array([   -r_a*sin(alpha)*alpha_velocity,
+                                            r_b*cos(alpha)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0,
+                                            0])
+    elif(opcao == "4"): # Equação da Elipse
+        cartesian_velocities = np.array([   0,
+                                            -r_a*sin(alpha)*alpha_velocity,
+                                            r_b*cos(alpha)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0])
+    elif(opcao == "5"): # Equação da Circunferência
+        cartesian_velocities = np.array([   -r*sin(alpha),
+                                            r*cos(alpha)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0,
+                                            0])
+    elif(opcao == "6"): # Equação da Circunferência
+        cartesian_velocities = np.array([   0,
+                                            -r*sin(alpha),
+                                            r*cos(alpha)*alpha_velocity,
+                                            0,
+                                            0,
+                                            0])
+    return cartesian_velocities
+
+
+
+"""
     Esta função retorna as respetivas posições iniciais com base na Equação
 """
 def Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha):
@@ -198,5 +248,19 @@ def Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha):
 
 
    
+"""
+    Esta função retorna os Respetivos Roll, Pitch, Yaw com base na Equação
+"""
+def Compute_Roll_Pitch_Yaw(opcao):
+    if (opcao == "1" or opcao == "3" or opcao == "5"): 
+        Roll = np.pi
+        Pitch = 0
+        Yaw = 0
 
+    elif(opcao == "2" or opcao == "4" or opcao == "6"): 
+        Roll = np.pi / 2
+        Pitch = - np.pi / 2
+        Yaw = np.pi / 2
+
+    return Roll, Pitch, Yaw
 
