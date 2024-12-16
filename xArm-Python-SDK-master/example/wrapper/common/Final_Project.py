@@ -246,7 +246,7 @@ Pos_ini_angles = UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pi
 config_rads = Pos_ini_angles
 
 # -> Coloca o Robô na posição Inicial:
-config_rads = UFactory_Lite.set_tool_position([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], speed=alpha_velocity, wait=True, is_radian=True)
+config_rads = UFactory_Lite.set_position(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, speed=200, wait=True, is_radian=True)
 UFactory_Lite.set_mode(4) # modo de velocidades
 
 
@@ -254,9 +254,13 @@ UFactory_Lite.set_mode(4) # modo de velocidades
 ###########################   Start Section  ######################
 
 
-T_0G = UFactory_Lite.get_forward_kinematics(Pos_ini_angles,input_is_radian=True, return_is_radian=True)
+T_0G_aux = UFactory_Lite.get_forward_kinematics(Pos_ini_angles[1],input_is_radian=True, return_is_radian=True)
+
+
+T_0G = T_0G_aux[1]
 
 pprint(T_0G)
+
 
 py_g_i = T_0G[1]
 pz_g_i = T_0G[2]
@@ -268,7 +272,7 @@ alpha_i = alpha
 integrative_error_vy = 0
 integrative_error_vz = 0
 
-N_voltas = 1
+N_voltas = 3
 
 # Se o Método escolhido for 1
 
