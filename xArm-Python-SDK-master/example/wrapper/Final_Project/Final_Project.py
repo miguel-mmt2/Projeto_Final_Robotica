@@ -345,12 +345,12 @@ while alpha_i < N_voltas*2*pi:
 
 while alpha_i < N_voltas*2*pi:
     startTime = time.monotonic()
-    
+
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
     J0R_red_subs = Subs(J0R,[t1, t2, t3, t4, t5, t6], config_rads)
     cartisian_velocities = np.array([           0,
-                        -r*sin(alpha_i)*alpha_velocity,
-    r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
+                        -r*sin(alpha)*alpha_velocity,
+    r*(cos(alpha_i)**2-sin(alpha)**2)*alpha_velocity,
                                                 0,
                                                 0,
                                                 0])
