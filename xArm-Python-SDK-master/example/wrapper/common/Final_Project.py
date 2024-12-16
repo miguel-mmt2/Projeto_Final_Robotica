@@ -347,6 +347,7 @@ while alpha_i < N_voltas*2*pi:
 # Se o Método escolhido for 2
 
 
+
 while alpha_i < N_voltas*2*pi:
     startTime = time.monotonic()
 
