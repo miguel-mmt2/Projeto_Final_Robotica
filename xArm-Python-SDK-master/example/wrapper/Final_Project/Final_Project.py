@@ -329,7 +329,7 @@ while alpha_i < N_voltas*2*pi:
     
 
     #UFactory_Lite.plot(config_rads, 'view', 'y')
-    if time.monotonic()-startTime<iterationTime:
+    if (time.monotonic() - startTime) < iterationTime:
         time.sleep(iterationTime-time.monotonic())
 
     UFactory_Lite.vc_set_joint_velocity(vel_config,is_radian=True)
@@ -367,7 +367,7 @@ while alpha_i < N_voltas*2*pi:
 
     #UFactory_Lite6.plot(config_rads,'view','y')
 
-    if time.monotonic()-startTime<iterationTime:
+    if (time.monotonic() - startTime) < iterationTime:
          time.sleep(iterationTime-time.monotonic())
 
     UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
