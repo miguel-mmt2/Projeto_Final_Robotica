@@ -143,71 +143,20 @@ def Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha, alpha_velocity):
                                             0,
                                             0])
     elif(opcao == "5"): # Equação da Circunferência
-        cartesian_velocities = np.array([   -r*sin(alpha),
+        cartesian_velocities = np.array([   -r*sin(alpha)*alpha_velocity,
                                             r*cos(alpha)*alpha_velocity,
                                             0,
                                             0,
                                             0,
                                             0])
     elif(opcao == "6"): # Equação da Circunferência
-        cartesian_velocities = np.array([   0,
-                                            -r*sin(alpha),
-                                            r*cos(alpha)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0])
-    return cartesian_velocities
-
-
-
-"""
-    Esta função retorna as respetivas velocidades cartesianas com base na Equação
-"""
-def Compute_cartesian_velocity_ideal(opcao, r, r_a, r_b, alpha, alpha_velocity):
-    if (opcao == "1"): # Equação do Infinito
-        cartesian_velocities = np.array([   -r*sin(alpha)*alpha_velocity,
-                                            r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0,
-                                            0])
-    elif(opcao == "2"): # Equação do Infinito
         cartesian_velocities = np.array([   0,
                                             -r*sin(alpha)*alpha_velocity,
-                                            r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0])
-    elif(opcao == "3"): # Equação da Elipse
-        cartesian_velocities = np.array([   -r_a*sin(alpha)*alpha_velocity,
-                                            r_b*cos(alpha)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0,
-                                            0])
-    elif(opcao == "4"): # Equação da Elipse
-        cartesian_velocities = np.array([   0,
-                                            -r_a*sin(alpha)*alpha_velocity,
-                                            r_b*cos(alpha)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0])
-    elif(opcao == "5"): # Equação da Circunferência
-        cartesian_velocities = np.array([   -r*sin(alpha),
-                                            r*cos(alpha)*alpha_velocity,
-                                            0,
-                                            0,
-                                            0,
-                                            0])
-    elif(opcao == "6"): # Equação da Circunferência
-        cartesian_velocities = np.array([   0,
-                                            -r*sin(alpha),
                                             r*cos(alpha)*alpha_velocity,
                                             0,
                                             0,
                                             0])
     return cartesian_velocities
-
 
 
 """

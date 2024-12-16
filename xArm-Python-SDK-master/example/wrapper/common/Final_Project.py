@@ -428,12 +428,7 @@ else:
 
         #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
         J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
-        cartisian_velocities = np.array([           0,
-                            -r*sin(alpha)*alpha_velocity,
-        r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
-                                                    0,
-                                                    0,
-                                                    0])
+        cartisian_velocities = Compute_cartesian_velocity(opcao,r,r_a,r_b,alpha,alpha_velocity)
         
         J0R_red_subs = Matrix(J0R_red_subs)
         J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
