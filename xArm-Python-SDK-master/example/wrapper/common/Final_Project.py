@@ -276,141 +276,144 @@ alpha_i = alpha
 integrative_error_vy = 0
 integrative_error_vz = 0
 
-N_voltas = 3
+N_voltas = 6
 
 # Se o Método escolhido for 1
 
 pprint(config_rads)
 UFactory_Lite.set_mode(4)
 UFactory_Lite.set_state(state=0)
-while alpha_i < N_voltas*2*pi:
+if metodo == 1:
+    while alpha_i < N_voltas*2*pi:
 
-    startTime = time.monotonic()
+        startTime = time.monotonic()
 
-    #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
-    J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
-   
-    cartisian_velocities = np.array([           0,
-                    -r*sin(alpha_i)*alpha_velocity,
-    r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
-                                                0,
-                                                0,
-                                                0])
+        #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+        J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
     
-    T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
-
-    # Real position values
-    T_0G = T_0G_aux[1]
-
-    py_g_r = T_0G[1]
-    pz_g_r = T_0G[2]
-
-
-    error_y = py_g_i - py_g_r
-    error_z = pz_g_i - pz_g_r
-
-    J0R_red_subs = Matrix(J0R_red_subs)
-    J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
-
-    vel = prop_vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
-
-    # velocidade de compensação para parte proporcional
-    vyy = (py_g_i - py_g_r)/iterationTime
-    vzz = (pz_g_i - pz_g_r)/iterationTime
-
-    # velocidade de compensação para parte integrativa
-    integrative_error_vy = integrative_error_vy + vyy
-    integrative_error_vz = integrative_error_vz + vzz
-
-
-     # velocidade de erro proporcional
-     
-    prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, vyy, vzz, 0, 0, 0]).T
-    
-    # veocidrade de erro integrativo
-    vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0]).T
-
-
-    
-    # aqui que mandamos as velocidades
-
-    #print(vel.shape)
-    #print(prop_vel.shape)
-    #print(vel_integrative.shape)
-    pprint(vel)
-    pprint(prop_vel)
-    pprint(vel_integrative)
-
-    vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
-
-    pprint(vel_config.shape)
-
-    aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
-    
-    py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
-    pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
-
-    alpha_i = alpha_i + alpha_velocity * iterationTime
+        cartisian_velocities = np.array([           0,
+                        -r*sin(alpha_i)*alpha_velocity,
+        r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
+                                                    0,
+                                                    0,
+                                                    0])
         
-    UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
-   
-    finalTime = time.monotonic()
+        T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
+
+        # Real position values
+        T_0G = T_0G_aux[1]
+
+        py_g_r = T_0G[1]
+        pz_g_r = T_0G[2]
+
+
+        error_y = py_g_i - py_g_r
+        error_z = pz_g_i - pz_g_r
+
+        J0R_red_subs = Matrix(J0R_red_subs)
+        J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
+
+        vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
+
+        # velocidade de compensação para parte proporcional
+        vyy = (py_g_i - py_g_r)/iterationTime
+        vzz = (pz_g_i - pz_g_r)/iterationTime
+
+        # velocidade de compensação para parte integrativa
+        integrative_error_vy = integrative_error_vy + vyy
+        integrative_error_vz = integrative_error_vz + vzz
+
+
+        # velocidade de erro proporcional
+        
+        prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, vyy, vzz, 0, 0, 0]).T
+        
+        # veocidrade de erro integrativo
+        vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0]).T
+
+
+        
+        # aqui que mandamos as velocidades
+
+        #print(vel.shape)
+        #print(prop_vel.shape)
+        #print(vel_integrative.shape)
+        pprint(vel)
+        pprint(prop_vel)
+        pprint(vel_integrative)
+
+        vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
+
+        pprint(vel_config.shape)
+
+        aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
+        
+        py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
+        pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
+
+        alpha_i = alpha_i + alpha_velocity * iterationTime
+            
+        UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
     
-    pprint(finalTime-startTime)
+        finalTime = time.monotonic()
+        
+        pprint(finalTime-startTime)
 
-    if (finalTime - startTime) < iterationTime:
-        time.sleep(iterationTime-(finalTime-startTime))
-   
+        if (finalTime - startTime) < iterationTime:
+            time.sleep(iterationTime-(finalTime-startTime))
+    
 
-    config_rads = aux_config
+        config_rads = aux_config
   
 
+else:
+    # Se o Método escolhido for 2
+
+    while alpha < N_voltas*2*pi:
+        startTime = time.monotonic()
+
+        #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+        J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
+        cartisian_velocities = np.array([           0,
+                            -r*sin(alpha)*alpha_velocity,
+        r*(cos(alpha)**2-sin(alpha)**2)*alpha_velocity,
+                                                    0,
+                                                    0,
+                                                    0])
+        
+        J0R_red_subs = Matrix(J0R_red_subs)
+        J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
+
+        vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
+        
 
 
+        aux_config = config_rads + vel.T * iterationTime
+        
+        alpha = alpha + alpha_velocity * iterationTime
 
-# Se o Método escolhido for 2
+        #UFactory_Lite6.plot(config_rads,'view','y')
 
+        pprint(time.monotonic() - startTime)
 
+        finalTime = time.monotonic()
 
-while alpha_i < N_voltas*2*pi:
-    startTime = time.monotonic()
+        if (finalTime - startTime) < iterationTime:
+            time.sleep(iterationTime-(finalTime-startTime))
 
-    #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
-    J0R_red_subs = J0R.subs(dict(zip([t1, t2, t3, t4, t5, t6], config_rads)))
-    cartisian_velocities = np.array([           0,
-                        -r*sin(alpha)*alpha_velocity,
-    r*(cos(alpha_i)**2-sin(alpha)**2)*alpha_velocity,
-                                                0,
-                                                0,
-                                                0])
-    
+        UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
 
-    vel = Inverse(J0R_red_subs) * cartisian_velocities
-
-    
-
-
-    aux_config = config_rads + (np.array([vel[0], vel[1], vel[2], vel[3], vel[4], vel[5]]) * iterationTime)
-    
-    alpha = alpha + alpha_velocity * iterationTime
-
-    #UFactory_Lite6.plot(config_rads,'view','y')
-
-    pprint(time.monotonic() - startTime)
-
-    if (time.monotonic() - startTime) < iterationTime:
-         time.sleep(iterationTime-time.monotonic())
-
-    UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
-
-    config_rads = aux_config
-      
+        config_rads = aux_config
+        
 
 
 # ============ Fim dos Métodos ============
-
-#UFactory_Lite.move_gohome(wait=True)
-#UFactory_Lite.disconnect()
+UFactory_Lite.vc_set_joint_velocity([0,0,0,0,0,0], is_radian=True)
+time.sleep(3)
+UFactory_Lite.set_mode(mode=0)
+UFactory_Lite.set_state(state=0)
+UFactory_Lite.move_gohome(wait=True)
+UFactory_Lite.disconnect()
 
 
 
