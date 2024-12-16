@@ -78,7 +78,7 @@ Yaw_z = pi/2
 
 alpha_velocity = pi/2
 alpha = 0
-iterationTime = 0.1
+iterationTime = float(0.1)
 
 # -> Inicialização das Constantes das Equações: 
 C = ["Cx", "Cy", "Cz"] 
@@ -244,6 +244,10 @@ p_x, p_y, p_z = Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha)
 # -> Cálculo da Cinemática Inversa:
 Pos_ini_angles = UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], input_is_radian=True, return_is_radian=True)
 config_rads = Pos_ini_angles[1]
+config_rads = config_rads[:6]
+#pprint(config_rads)
+
+
 
 # -> Coloca o Robô na posição Inicial:
 UFactory_Lite.set_position(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, speed=200, wait=True, is_radian=True)
@@ -258,7 +262,7 @@ T_0G_aux = UFactory_Lite.get_forward_kinematics(Pos_ini_angles[1],input_is_radia
 
 
 T_0G = T_0G_aux[1]
-
+#pprint(T_0G)
 
 
 
@@ -277,7 +281,8 @@ N_voltas = 3
 # Se o Método escolhido for 1
 
 pprint(config_rads)
-
+UFactory_Lite.set_mode(4)
+UFactory_Lite.set_state(state=0)
 while alpha_i < N_voltas*2*pi:
 
     startTime = time.monotonic()
@@ -304,7 +309,11 @@ while alpha_i < N_voltas*2*pi:
     error_y = py_g_i - py_g_r
     error_z = pz_g_i - pz_g_r
 
-    vel = prop_vel = np.linalg.inv(J0R_red_subs) * cartisian_velocities
+    J0R_red_subs = Matrix(J0R_red_subs)
+    J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
+
+    vel = prop_vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
+
     # velocidade de compensação para parte proporcional
     vyy = (py_g_i - py_g_r)/iterationTime
     vzz = (pz_g_i - pz_g_r)/iterationTime
@@ -315,32 +324,43 @@ while alpha_i < N_voltas*2*pi:
 
 
      # velocidade de erro proporcional
-    prop_vel = Inverse(J0R_red_subs) * sp.Array([0, vyy, vzz, 0, 0, 0])
+     
+    prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, vyy, vzz, 0, 0, 0]).T
     
     # veocidrade de erro integrativo
-    vel_integrative = Inverse(J0R_red_subs) * sp.Array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0])
+    vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0]).T
 
 
     
     # aqui que mandamos as velocidades
 
-    vel_config = vel + Kp * prop_vel + Ki * vel_integrative 
+    #print(vel.shape)
+    #print(prop_vel.shape)
+    #print(vel_integrative.shape)
+    pprint(vel)
+    pprint(prop_vel)
+    pprint(vel_integrative)
 
-    
-    
-    aux_config = config_rads + Kp * np.array([vel[0], vel[1],vel[2], vel[3], vel[4],vel[5]]) * iterationTime + Ki * np.array([vel_integrative[0], vel_integrative[1],vel_integrative[2], vel_integrative[3], vel_integrative[4],vel_integrative[5]]) * iterationTime
+    vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
+
+    pprint(vel_config.shape)
+
+    aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
     
     py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
     pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
 
     alpha_i = alpha_i + alpha_velocity * iterationTime
+        
+    UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True)
+   
+    finalTime = time.monotonic()
     
+    pprint(finalTime-startTime)
 
-    #UFactory_Lite.plot(config_rads, 'view', 'y')
-    if (time.monotonic() - startTime) < iterationTime:
-        time.sleep(iterationTime-time.monotonic())
-
-    UFactory_Lite.vc_set_joint_velocity(vel_config,is_radian=True)
+    if (finalTime - startTime) < iterationTime:
+        time.sleep(iterationTime-(finalTime-startTime))
+   
 
     config_rads = aux_config
   
