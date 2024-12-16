@@ -28,7 +28,7 @@ import sympy as sp
 
 # Expressões Matemáticas:
 import math
-from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Inverse, Subs
+from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Subs
 from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
@@ -243,10 +243,10 @@ p_x, p_y, p_z = Compute_Inical_Position(opcao, C, r, r_a, r_b, alpha)
 
 # -> Cálculo da Cinemática Inversa:
 Pos_ini_angles = UFactory_Lite.get_inverse_kinematics([p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z], input_is_radian=True, return_is_radian=True)
-config_rads = Pos_ini_angles
+config_rads = Pos_ini_angles[1]
 
 # -> Coloca o Robô na posição Inicial:
-config_rads = UFactory_Lite.set_position(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, speed=200, wait=True, is_radian=True)
+UFactory_Lite.set_position(p_x, p_y, p_z, Roll_x, Pitch_y, Yaw_z, speed=200, wait=True, is_radian=True)
 UFactory_Lite.set_mode(4) # modo de velocidades
 
 
@@ -259,7 +259,7 @@ T_0G_aux = UFactory_Lite.get_forward_kinematics(Pos_ini_angles[1],input_is_radia
 
 T_0G = T_0G_aux[1]
 
-pprint(T_0G)
+
 
 
 py_g_i = T_0G[1]
@@ -276,12 +276,15 @@ N_voltas = 3
 
 # Se o Método escolhido for 1
 
+pprint(config_rads)
+
 while alpha_i < N_voltas*2*pi:
 
     startTime = time.monotonic()
 
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
-    J0R_red_subs = Subs(J0R,[t1, t2, t3, t4, t5, t6], config_rads)
+    J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
+   
     cartisian_velocities = np.array([           0,
                     -r*sin(alpha_i)*alpha_velocity,
     r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
@@ -289,9 +292,10 @@ while alpha_i < N_voltas*2*pi:
                                                 0,
                                                 0])
     
-    T_0G = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
+    T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
     # Real position values
+    T_0G = T_0G_aux[1]
 
     py_g_r = T_0G[1]
     pz_g_r = T_0G[2]
@@ -300,7 +304,7 @@ while alpha_i < N_voltas*2*pi:
     error_y = py_g_i - py_g_r
     error_z = pz_g_i - pz_g_r
 
-    vel = prop_vel = Inverse(J0R_red_subs) * cartisian_velocities
+    vel = prop_vel = np.linalg.inv(J0R_red_subs) * cartisian_velocities
     # velocidade de compensação para parte proporcional
     vyy = (py_g_i - py_g_r)/iterationTime
     vzz = (pz_g_i - pz_g_r)/iterationTime
@@ -352,7 +356,7 @@ while alpha_i < N_voltas*2*pi:
     startTime = time.monotonic()
 
     #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
-    J0R_red_subs = Subs(J0R,[t1, t2, t3, t4, t5, t6], config_rads)
+    J0R_red_subs = J0R.subs(dict(zip([t1, t2, t3, t4, t5, t6], config_rads)))
     cartisian_velocities = np.array([           0,
                         -r*sin(alpha)*alpha_velocity,
     r*(cos(alpha_i)**2-sin(alpha)**2)*alpha_velocity,
