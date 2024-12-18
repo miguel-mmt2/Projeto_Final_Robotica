@@ -227,9 +227,11 @@ J0R = sp.nsimplify(J0R, tolerance = 1e-5)
 
 
 
+
 # ============ Definição das velocidades Cartesianas ============
 # -> Cálculo das velocidades cartesianas:
 cartesian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha, alpha_velocity)
+
 
 
 
@@ -296,61 +298,6 @@ if metodo == 1:
 
     # Equação da Circunferência
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
-
-        T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
-
-        # Real position values
-        T_0G = T_0G_aux[1]
-
-        py_g_r = T_0G[1]
-        pz_g_r = T_0G[2]
-
-
-        error_y = py_g_i - py_g_r
-        error_z = pz_g_i - pz_g_r
-
-        J0R_red_subs = Matrix(J0R_red_subs)
-        J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
-
-        vel = prop_vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
-
-        # velocidade de compensação para parte proporcional
-        vyy = (py_g_i - py_g_r)/iterationTime
-        vzz = (pz_g_i - pz_g_r)/iterationTime
-
-        # velocidade de compensação para parte integrativa
-        integrative_error_vy = integrative_error_vy + vyy
-        integrative_error_vz = integrative_error_vz + vzz
-
-
-        # velocidade de erro proporcional
-        
-        prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, vyy, vzz, 0, 0, 0]).T
-        
-        # veocidrade de erro integrativo
-        vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0]).T
-
-
-        
-        # aqui que mandamos as velocidades
-
-        #print(vel.shape)
-        #print(prop_vel.shape)
-        #print(vel_integrative.shape)
-        pprint(vel)
-        pprint(prop_vel)
-        pprint(vel_integrative)
-
-        vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
-
-        pprint(vel_config.shape)
-
-        aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
-        
-        py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
-        pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
-
-        alpha_i = alpha_i + alpha_velocity * iterationTime
         
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
@@ -440,8 +387,6 @@ else:
         aux_config = config_rads + vel.T * iterationTime
         
         alpha = alpha + alpha_velocity * iterationTime
-
-        #UFactory_Lite6.plot(config_rads,'view','y')
 
         pprint(time.monotonic() - startTime)
 
