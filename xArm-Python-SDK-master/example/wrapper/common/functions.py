@@ -213,3 +213,29 @@ def Compute_Roll_Pitch_Yaw(opcao):
 
     return Roll, Pitch, Yaw
 
+"""
+    Esta função retorna as Posições a mudar tendo em conta a Equação escolhida no Menu
+"""
+def Compute_Position(opcao, T_0G):
+    if (opcao == "1" or opcao == "3" or opcao == "5"): 
+        p1 = T_0G[0]
+        p2 = T_0G[1]
+
+    elif(opcao == "2" or opcao == "4" or opcao == "6"): 
+        p1 = T_0G[1]
+        p2 = T_0G[2]
+
+    return p1, p2
+
+
+def Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs):
+    if (opcao == "1" or opcao == "3" or opcao == "5"): 
+        prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([v1, v2, 0, 0, 0, 0]).T
+        vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([integrative_error_v1, integrative_error_v2, 0, 0, 0, 0]).T
+
+    elif(opcao == "2" or opcao == "4" or opcao == "6"): 
+        prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, v1, v2, 0, 0, 0]).T
+        vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_v1, integrative_error_v2, 0, 0, 0]).T
+
+    return prop_vel, vel_integrative
+

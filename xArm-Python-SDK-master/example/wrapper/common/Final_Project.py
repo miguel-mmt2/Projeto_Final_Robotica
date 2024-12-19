@@ -43,6 +43,8 @@ from functions import constantes_circunferencia
 from functions import Compute_cartesian_velocity
 from functions import Compute_Inical_Position
 from functions import Compute_Roll_Pitch_Yaw
+from functions import Compute_Position
+from functions import Compute_PI_Velocity_Errors
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
@@ -262,17 +264,16 @@ T_0G_aux = UFactory_Lite.get_forward_kinematics(Pos_ini_angles[1],input_is_radia
 T_0G = T_0G_aux[1]
 #pprint(T_0G)
 
+# Cálculo das Posições ideiais:
+p1_g_i, p2_g_i = Compute_Position(opcao, T_0G)
 
-
-py_g_i = T_0G[1]
-pz_g_i = T_0G[2]
 
 #alpha_i = alpha + alpha_velocity * iterationTime
 alpha_i = alpha
 
 # Variables for PI controller
-integrative_error_vy = 0
-integrative_error_vz = 0
+integrative_error_v1 = 0
+integrative_error_v2 = 0
 
 N_voltas = 6
 
@@ -286,17 +287,10 @@ if metodo == 1:
 
         startTime = time.monotonic()
 
-        #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
+        # Cálculo do Jacobiano Simplificado:
         J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
     
-        # cartisian_velocities = np.array([           0,
-        #                 -r*sin(alpha_i)*alpha_velocity,
-        # r*(cos(alpha_i)**2-sin(alpha_i)**2)*alpha_velocity,
-        #                                             0,
-        #                                             0,
-        #                                             0])
-
-    # Equação da Circunferência
+        # Cálculo das Equações da Velocidade Cartesiana:
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
         
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
@@ -304,12 +298,11 @@ if metodo == 1:
         # Real position values
         T_0G = T_0G_aux[1]
 
-        py_g_r = T_0G[1]
-        pz_g_r = T_0G[2]
+        p1_g_r, p2_g_r = Compute_Position(opcao, T_0G)
 
 
-        error_y = py_g_i - py_g_r
-        error_z = pz_g_i - pz_g_r
+        error_1 = p1_g_i - p1_g_r
+        error_2 = p2_g_i - p2_g_r
 
         J0R_red_subs = Matrix(J0R_red_subs)
         J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
@@ -317,20 +310,19 @@ if metodo == 1:
         vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
 
         # velocidade de compensação para parte proporcional
-        vyy = (py_g_i - py_g_r)/iterationTime
-        vzz = (pz_g_i - pz_g_r)/iterationTime
+        v1 = (p1_g_i - p1_g_r)/iterationTime
+        v2 = (p2_g_i - p2_g_r)/iterationTime
 
         # velocidade de compensação para parte integrativa
-        integrative_error_vy = integrative_error_vy + vyy
-        integrative_error_vz = integrative_error_vz + vzz
+        integrative_error_v1 = integrative_error_v1 + v1
+        integrative_error_v2 = integrative_error_v2 + v2
 
 
-        # velocidade de erro proporcional
+        # velocidade de erro proporcional e veocidrade de erro integrativo
+        prop_vel, vel_integrative = Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs)
         
-        prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([0, vyy, vzz, 0, 0, 0]).T
         
-        # veocidrade de erro integrativo
-        vel_integrative = np.linalg.inv(J0R_red_subs) @ np.array([0, integrative_error_vy, integrative_error_vz, 0, 0, 0]).T
+        
 
 
         
@@ -349,8 +341,14 @@ if metodo == 1:
 
         aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
         
-        py_g_i = py_g_i + cartisian_velocities[1] * iterationTime
-        pz_g_i = pz_g_i + cartisian_velocities[2] * iterationTime
+        if (opcao == "1" or opcao == "3" or opcao == "5"): 
+            p1_g_i = p1_g_i + cartisian_velocities[0] * iterationTime
+            p2_g_i = p2_g_i + cartisian_velocities[1] * iterationTime
+
+        elif(opcao == "2" or opcao == "4" or opcao == "6"): 
+            p1_g_i = p1_g_i + cartisian_velocities[1] * iterationTime
+            p2_g_i = p2_g_i + cartisian_velocities[2] * iterationTime
+
 
         alpha_i = alpha_i + alpha_velocity * iterationTime
             

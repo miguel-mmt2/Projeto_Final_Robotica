@@ -45,10 +45,7 @@ arm.set_mode(0)
 arm.set_state(state=0)
 time.sleep(1)
 
-arm.move_gohome(wait=True)
-
 # set joint velocity control mode
-arm.set_mode(4)
 arm.set_state(0)
 time.sleep(1)
 
@@ -61,14 +58,10 @@ print(f"Valor do Relógio Inicial: {start}")
 
 while count > 0:
     count -= 1
-    arm.vc_set_joint_velocity([-50, 0, 0, 0, 0, -50])
-    time.sleep(2)
-    arm.vc_set_joint_velocity([50, 0, 0, 0, 0, 50])
+    arm.set_position([200, 200, 200, 0, 0, 0], speed=200,input_is_radian=True, return_is_radian=True)
     time.sleep(2)
 
 # stop
-arm.vc_set_joint_velocity([0, 0, 0, 0, 0, 0])
-
 print("================= Valor do Relógio Inicial =================")
 end = time.monotonic()
 
