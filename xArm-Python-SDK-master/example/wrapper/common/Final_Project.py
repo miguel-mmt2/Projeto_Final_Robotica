@@ -81,16 +81,12 @@ iterationTime = float(0.1)
 # -> Inicialização das Constantes das Equações: 
 C = ["Cx", "Cy", "Cz"] 
 r = "r"  
-r_a = "r_a"  
+r_a = "r_a" 
 r_b = "r_b" 
 
 #Lg = 61.5
 
-<<<<<<< HEAD
-Kp = 0.9    # 0.7
-=======
-Kp = 0.9 # 0.7 -> Circunferência
->>>>>>> 9888557035ce695b81cf32d51c04ddf463da2c15
+Kp = 1 # 0.7 -> Circunferência
 Ki = 0.05   # 0.055 || 0.05
 
 # ============ Setup do Robô ============
