@@ -17,7 +17,7 @@ Autores:
 Entrega: 5 de Janeiro de 2025
 """
 
-# ============ Importar as Bibliotecas ============
+# =============================== Importar as Bibliotecas ===============================
 import os
 import sys
 import time
@@ -26,14 +26,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sympy as sp
 
-# Expressões Matemáticas:
+#  ==> Expressões Matemáticas:
 import math
 from sympy import tensorproduct,shape, DotProduct, Matrix, pprint, Subs
 from numpy import eye, round
 from math import sqrt, cos, sin, pi
 from MGH_DH import MGH_DH
 
-# Funções auxiliares:
+# ==> Funções auxiliares (functions.py):
 import functions
 from functions import clc
 from functions import opcoes_menu
@@ -46,10 +46,10 @@ from functions import Compute_Roll_Pitch_Yaw
 from functions import Compute_Position
 from functions import Compute_PI_Velocity_Errors
 
+
+
+from xarm.wrapper import XArmAPI 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
-
-from xarm.wrapper import XArmAPI # Importar a API do Robô
-
 #ip = 162.163
 
 # ============ Conexão ao Robô ============
@@ -86,13 +86,13 @@ r_b = "r_b"
 
 #Lg = 61.5
 
-Kp = 0.9 # 0.7 -> Circunferência
+Kp = 1 #0.9 # 0.7 -> Circunferência
 Ki = 0.05   # 0.055 || 0.05
 
 # ============ Setup do Robô ============
 
 UFactory_Lite = XArmAPI(ip)
-UFactory_Lite.set_simulation_robot(on_off=False)
+UFactory_Lite.set_simulation_robot(on_off=True)
 UFactory_Lite.motion_enable(enable=True)
 UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
 UFactory_Lite.set_state(state=0)
@@ -283,10 +283,22 @@ error_2_array_plot = []
 p1_g_r_array_plot = [] # Posições no plano
 p2_g_r_array_plot = []
 
-config_rads_array_plot = [] # Posição
-vel_config_array_plot = [] # Velocidades
+config_rads_array_plot_1 = [] # Posição Junta 1
+config_rads_array_plot_2 = [] # Posição Junta 2
+config_rads_array_plot_3 = [] # Posição Junta 3
+config_rads_array_plot_4 = [] # Posição Junta 4
+config_rads_array_plot_5 = [] # Posição Junta 5
+config_rads_array_plot_6 = [] # Posição Junta 6
 
-cartesian_velocities_array_plot = [] # Velocidades Cartesianas
+vel_config_array_plot_1 = [] # Velocidades Junta 1
+vel_config_array_plot_2 = [] # Velocidades Junta 2
+vel_config_array_plot_3 = [] # Velocidades Junta 3
+vel_config_array_plot_4 = [] # Velocidades Junta 4
+vel_config_array_plot_5 = [] # Velocidades Junta 5
+vel_config_array_plot_6 = [] # Velocidades Junta 6
+
+cartesian_velocities_array_plot_1 = [] # Velocidades Cartesianas
+cartesian_velocities_array_plot_2 = [] # Velocidades Cartesianas
 
 
 # Se o Método escolhido for 1
@@ -301,11 +313,18 @@ if metodo == "1":
 
         # Cálculo do Jacobiano Simplificado:
         J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
-        config_rads_array_plot.append(config_rads)
+        
+        config_rads_array_plot_1.append(config_rads[0])
+        config_rads_array_plot_2.append(config_rads[1])
+        config_rads_array_plot_3.append(config_rads[2])
+        config_rads_array_plot_4.append(config_rads[3])
+        config_rads_array_plot_5.append(config_rads[4])
+        config_rads_array_plot_6.append(config_rads[5])
 
         # Cálculo das Equações da Velocidade Cartesiana:
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
-        cartesian_velocities_array_plot.append(cartisian_velocities)
+        cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
+        cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
         
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
@@ -357,11 +376,18 @@ if metodo == "1":
         #pprint(vel_integrative)
 
         vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
-        vel_config_array_plot.append(vel_config)
+
+        vel_config_array_plot_1.append(vel_config[0])
+        vel_config_array_plot_2.append(vel_config[1])
+        vel_config_array_plot_3.append(vel_config[2])
+        vel_config_array_plot_4.append(vel_config[3])
+        vel_config_array_plot_5.append(vel_config[4])
+        vel_config_array_plot_6.append(vel_config[5])
 
         #pprint(vel_config.shape)
 
         aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
+
         
         if (opcao == "1" or opcao == "3" or opcao == "5"): 
             p1_g_i = p1_g_i + cartisian_velocities[0] * iterationTime
@@ -434,18 +460,151 @@ UFactory_Lite.disconnect()
 
 pprint(error_1_array_plot)
 
-plt.figure(1)
-plt.plot(range(len(error_1_array_plot)) ,error_1_array_plot, label='Error 1')
+# Gráficos dos erros
+plt.figure(1, figsize=(10, 6))
+
+# Subplot para o Error 1
+plt.subplot(2, 1, 1)
+plt.plot(range(len(error_1_array_plot)), error_1_array_plot, label='Erro 1', color='red')
+plt.title('Evolução dos Erros ao Longo do Tempo')
+plt.ylabel('Erro 1')
+plt.grid(True)
+plt.legend()
+
+# Subplot para o Error 2
+plt.subplot(2, 1, 2)
+plt.plot(range(len(error_2_array_plot)), error_2_array_plot, label='Erro 2', color='blue')
+plt.xlabel('Iteração')
+plt.ylabel('Erro 2')
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+
+theta = np.linspace(0, 2 * np.pi, 1000)
+
+# Coordenadas da curva no plano (C[1], C[2])
+y = C[1] + r * np.cos(theta)
+z = C[2] + r * np.sin(theta) * np.cos(theta)
+
+# Gráfico da trajetória no plano cartesiano
+plt.figure(2, figsize=(10, 6))
+plt.plot(y, z, label='Trajetória Planejada', color='red')
+plt.plot(p1_g_r_array_plot, p2_g_r_array_plot, label='Trajetória Planejada', color='blue')
+plt.title('Trajetória Planejada no Plano Cartesiano')
+plt.xlabel('Posição X (mm)')
+plt.ylabel('Posição Y (mm)')
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
 
 
-plt.figure(2)
-plt.plot(range(len(error_2_array_plot)) ,error_2_array_plot, label='Error 2')
+
+# Gráficos das posições das juntas
+plt.figure(3, figsize=(12, 10))
+
+# Subplot para cada junta Posição
+plt.subplot(6, 1, 1)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_1, label='Junta 1', color='red')
+plt.title('Posições das Juntas ao Longo do Tempo')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 2)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_2, label='Junta 2', color='orange')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 3)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_3, label='Junta 3', color='green')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 4)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_4, label='Junta 4', color='blue')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 5)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_5, label='Junta 5', color='purple')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 6)
+plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_6, label='Junta 6', color='brown')
+plt.xlabel('Iteração')
+plt.ylabel('Posição (rad)')
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+
+# Gráficos das posições das juntas
+plt.figure(4, figsize=(12, 10))
+
+# Subplot para cada junta Velocidade
+plt.subplot(6, 1, 1)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_1, label='Junta 1', color='red')
+plt.title('Velocidade das Juntas ao Longo do Tempo')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 2)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_2, label='Junta 2', color='orange')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 3)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_3, label='Junta 3', color='green')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 4)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_4, label='Junta 4', color='blue')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 5)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_5, label='Junta 5', color='purple')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 6)
+plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_6, label='Junta 6', color='brown')
+plt.xlabel('Iteração')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.tight_layout()
+
+# Gráficos das posições das juntas
+plt.figure(5, figsize=(12, 10))
+
+# Subplot para Cartesiana Velocidade
+plt.subplot(6, 1, 1)
+plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_1, label='vy', color='red')
+plt.title('Velocidade Cartesianas ao Longo do Tempo')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(6, 1, 2)
+plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_2, label='vz', color='orange')
+plt.ylabel('Velocidade (rad/s)')
+plt.grid(True)
+plt.legend()
 
 
-plt.figure(3)
-plt.plot(p1_g_r_array_plot ,p2_g_r_array_plot)
+# Exibir todos os gráficos
 plt.show()
-
-
-
-
