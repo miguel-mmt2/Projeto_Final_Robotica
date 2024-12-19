@@ -86,8 +86,8 @@ r_b = "r_b"
 
 #Lg = 61.5
 
-Kp = 0.8
-Ki = 0.055   # 0.055 || 0.05
+Kp = 0.9
+Ki = 0.05   # 0.055 || 0.05
 
 
 # ============ Setup do Robô ============
@@ -275,23 +275,37 @@ alpha_i = alpha
 integrative_error_v1 = 0
 integrative_error_v2 = 0
 
-N_voltas = 6
+N_voltas = 5
+
+error_1_array_plot = [] # Erro
+error_2_array_plot = []
+
+p1_g_r_array_plot = [] # Posições no plano
+p2_g_r_array_plot = []
+
+config_rads_array_plot = [] # Posição
+vel_config_array_plot = [] # Velocidades
+
+cartesian_velocities_array_plot = [] # Velocidades Cartesianas
+
 
 # Se o Método escolhido for 1
 
 #pprint(config_rads)
 UFactory_Lite.set_mode(4)
 UFactory_Lite.set_state(state=0)
-if metodo == 1:
+if metodo == "1":
     while alpha_i < N_voltas*2*pi:
 
         startTime = time.monotonic()
 
         # Cálculo do Jacobiano Simplificado:
         J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
-    
+        config_rads_array_plot.append(config_rads)
+
         # Cálculo das Equações da Velocidade Cartesiana:
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
+        cartesian_velocities_array_plot.append(cartisian_velocities)
         
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
 
@@ -299,10 +313,14 @@ if metodo == 1:
         T_0G = T_0G_aux[1]
 
         p1_g_r, p2_g_r = Compute_Position(opcao, T_0G)
+        p1_g_r_array_plot.append(p1_g_r)
+        p2_g_r_array_plot.append(p2_g_r)
 
 
         error_1 = p1_g_i - p1_g_r
         error_2 = p2_g_i - p2_g_r
+        error_1_array_plot.append(error_1)
+        error_2_array_plot.append(error_2)
 
         J0R_red_subs = Matrix(J0R_red_subs)
         J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
@@ -339,6 +357,7 @@ if metodo == 1:
         #pprint(vel_integrative)
 
         vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
+        vel_config_array_plot.append(vel_config)
 
         #pprint(vel_config.shape)
 
@@ -366,10 +385,11 @@ if metodo == 1:
     
 
         config_rads = aux_config
-  
+
 
 else:
     # Se o Método escolhido for 2
+    print("aquiiiii")
 
     UFactory_Lite.set_mode(4) # modo de velocidades
     while alpha < N_voltas*2*pi:
@@ -412,6 +432,19 @@ UFactory_Lite.set_state(state=0)
 UFactory_Lite.move_gohome(wait=True)
 UFactory_Lite.disconnect()
 
+pprint(error_1_array_plot)
+
+plt.figure(1)
+plt.plot(range(len(error_1_array_plot)) ,error_1_array_plot, label='Error 1')
+
+
+plt.figure(2)
+plt.plot(range(len(error_2_array_plot)) ,error_2_array_plot, label='Error 2')
+
+
+plt.figure(3)
+plt.plot(p1_g_r_array_plot ,p2_g_r_array_plot)
+plt.show()
 
 
 
