@@ -86,7 +86,7 @@ r_b = "r_b"
 
 #Lg = 61.5
 
-Kp = 0.8
+Kp = 0.7
 Ki = 0.055   # 0.055 || 0.05
 
 
@@ -275,7 +275,7 @@ alpha_i = alpha
 integrative_error_v1 = 0
 integrative_error_v2 = 0
 
-N_voltas = 6
+N_voltas = 5
 
 # Se o Método escolhido for 1
 
