@@ -81,7 +81,7 @@ iterationTime = float(0.1)
 # -> Inicialização das Constantes das Equações: 
 C = ["Cx", "Cy", "Cz"] 
 r = "r"  
-r_a = "r_a"  
+r_a = "r_a" 
 r_b = "r_b" 
 
 #Lg = 61.5
@@ -275,7 +275,7 @@ alpha_i = alpha
 integrative_error_v1 = 0
 integrative_error_v2 = 0
 
-N_voltas = 5
+N_voltas = 4
 
 error_1_array_plot = [] # Erro
 error_2_array_plot = []
@@ -350,8 +350,8 @@ if metodo == "1":
         v1 = (p1_g_i - p1_g_r)/iterationTime
         v2 = (p2_g_i - p2_g_r)/iterationTime
 
-        print(v1)
-        print(v2)
+        #print(v1)
+        #print(v2)
 
         # velocidade de compensação para parte integrativa
         integrative_error_v1 = integrative_error_v1 + v1
@@ -361,10 +361,7 @@ if metodo == "1":
         # velocidade de erro proporcional e veocidrade de erro integrativo
         prop_vel, vel_integrative = Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs)
         
-        
-        
-
-
+    
         
         # aqui que mandamos as velocidades
 
@@ -404,7 +401,7 @@ if metodo == "1":
     
         finalTime = time.monotonic()
         
-        #pprint(finalTime-startTime)
+        pprint(finalTime-startTime)
 
         if (finalTime - startTime) < iterationTime:
             time.sleep(iterationTime-(finalTime-startTime))
@@ -415,9 +412,8 @@ if metodo == "1":
 
 else:
     # Se o Método escolhido for 2
-    print("aquiiiii")
 
-    UFactory_Lite.set_mode(4) # modo de velocidades
+    #UFactory_Lite.set_mode(4) # modo de velocidades
     while alpha < N_voltas*2*pi:
         startTime = time.monotonic()
 
@@ -462,7 +458,7 @@ pprint(error_1_array_plot)
 
 # Gráficos dos erros
 plt.figure(1, figsize=(10, 6))
-
+   
 # Subplot para o Error 1
 plt.subplot(2, 1, 1)
 plt.plot(range(len(error_1_array_plot)), error_1_array_plot, label='Erro 1', color='red')
