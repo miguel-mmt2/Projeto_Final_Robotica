@@ -82,10 +82,10 @@ r = "r"
 r_a = "r_a"  
 r_b = "r_b" 
 
-Lg = 61.5
+#Lg = 61.5
 
-Kp = 0.9
-Ki = 0.04
+Kp = 0.8
+Ki = 0.055   # 0.055 || 0.05
 
 
 # ============ Setup do Robô ============
@@ -278,7 +278,7 @@ N_voltas = 6
 
 # Se o Método escolhido for 1
 
-pprint(config_rads)
+#pprint(config_rads)
 UFactory_Lite.set_mode(4)
 UFactory_Lite.set_state(state=0)
 if metodo == 1:
@@ -296,7 +296,7 @@ if metodo == 1:
         #                                             0,
         #                                             0])
 
-    # Equação da Circunferência
+        # Equação da Circunferência
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
         
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
@@ -320,6 +320,9 @@ if metodo == 1:
         vyy = (py_g_i - py_g_r)/iterationTime
         vzz = (pz_g_i - pz_g_r)/iterationTime
 
+        print(vyy)
+        print(vzz)
+
         # velocidade de compensação para parte integrativa
         integrative_error_vy = integrative_error_vy + vyy
         integrative_error_vz = integrative_error_vz + vzz
@@ -339,13 +342,13 @@ if metodo == 1:
         #print(vel.shape)
         #print(prop_vel.shape)
         #print(vel_integrative.shape)
-        pprint(vel)
-        pprint(prop_vel)
-        pprint(vel_integrative)
+        #pprint(vel)
+        #pprint(prop_vel)
+        #pprint(vel_integrative)
 
         vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
 
-        pprint(vel_config.shape)
+        #pprint(vel_config.shape)
 
         aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
         
@@ -358,7 +361,7 @@ if metodo == 1:
     
         finalTime = time.monotonic()
         
-        pprint(finalTime-startTime)
+        #pprint(finalTime-startTime)
 
         if (finalTime - startTime) < iterationTime:
             time.sleep(iterationTime-(finalTime-startTime))
@@ -370,6 +373,7 @@ if metodo == 1:
 else:
     # Se o Método escolhido for 2
 
+    UFactory_Lite.set_mode(4) # modo de velocidades
     while alpha < N_voltas*2*pi:
         startTime = time.monotonic()
 
@@ -388,9 +392,10 @@ else:
         
         alpha = alpha + alpha_velocity * iterationTime
 
-        pprint(time.monotonic() - startTime)
+
 
         finalTime = time.monotonic()
+        #pprint(finalTime - startTime)
 
         if (finalTime - startTime) < iterationTime:
             time.sleep(iterationTime-(finalTime-startTime))
