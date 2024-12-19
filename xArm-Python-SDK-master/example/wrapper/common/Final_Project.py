@@ -86,8 +86,8 @@ r_b = "r_b"
 
 #Lg = 61.5
 
-Kp = 0.7
-Ki = 0.055   # 0.055 || 0.05
+Kp = 0.9
+Ki = 0.050   # 0.055 || 0.05
 
 
 # ============ Setup do Robô ============
@@ -275,14 +275,14 @@ alpha_i = alpha
 integrative_error_v1 = 0
 integrative_error_v2 = 0
 
-N_voltas = 5
+N_voltas = 4
 
 # Se o Método escolhido for 1
 
 #pprint(config_rads)
 UFactory_Lite.set_mode(4)
 UFactory_Lite.set_state(state=0)
-if metodo == 1:
+if metodo == "1":
     while alpha_i < N_voltas*2*pi:
 
         startTime = time.monotonic()
@@ -313,8 +313,8 @@ if metodo == 1:
         v1 = (p1_g_i - p1_g_r)/iterationTime
         v2 = (p2_g_i - p2_g_r)/iterationTime
 
-        print(v1)
-        print(v2)
+        #print(v1)
+        #print(v2)
 
         # velocidade de compensação para parte integrativa
         integrative_error_v1 = integrative_error_v1 + v1
@@ -324,10 +324,7 @@ if metodo == 1:
         # velocidade de erro proporcional e veocidrade de erro integrativo
         prop_vel, vel_integrative = Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs)
         
-        
-        
-
-
+    
         
         # aqui que mandamos as velocidades
 
@@ -359,7 +356,7 @@ if metodo == 1:
     
         finalTime = time.monotonic()
         
-        #pprint(finalTime-startTime)
+        pprint(finalTime-startTime)
 
         if (finalTime - startTime) < iterationTime:
             time.sleep(iterationTime-(finalTime-startTime))
@@ -371,7 +368,7 @@ if metodo == 1:
 else:
     # Se o Método escolhido for 2
 
-    UFactory_Lite.set_mode(4) # modo de velocidades
+    #UFactory_Lite.set_mode(4) # modo de velocidades
     while alpha < N_voltas*2*pi:
         startTime = time.monotonic()
 
