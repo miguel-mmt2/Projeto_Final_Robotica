@@ -86,13 +86,13 @@ r_b = "r_b"
 
 #Lg = 61.5
 
-Kp = 0.9
+Kp = 0.9 # 0.7 -> Circunferência
 Ki = 0.05   # 0.055 || 0.05
-
 
 # ============ Setup do Robô ============
 
 UFactory_Lite = XArmAPI(ip)
+UFactory_Lite.set_simulation_robot(on_off=False)
 UFactory_Lite.motion_enable(enable=True)
 UFactory_Lite.set_mode(0)                     # after 4 -> for set_velocity() mode control 
 UFactory_Lite.set_state(state=0)
