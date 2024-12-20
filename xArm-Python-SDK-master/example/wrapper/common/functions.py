@@ -6,6 +6,7 @@ import os
 import numpy as np
 from numpy import sin
 from numpy import cos
+import matplotlib.pyplot as plt
 
 # ============ Funções Auxiliares ============
 
@@ -213,6 +214,8 @@ def Compute_Roll_Pitch_Yaw(opcao):
 
     return Roll, Pitch, Yaw
 
+
+
 """
     Esta função retorna as Posições a mudar tendo em conta a Equação escolhida no Menu
 """
@@ -228,6 +231,9 @@ def Compute_Position(opcao, T_0G):
     return p1, p2
 
 
+"""
+    Esta função retorna as velocidades Proporcionais e Integrativas tendo em conta a Equação escolhida no Menu
+"""
 def Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs):
     if (opcao == "1" or opcao == "3" or opcao == "5"): 
         prop_vel = np.linalg.inv(J0R_red_subs) @ np.array([v1, v2, 0, 0, 0, 0]).T
@@ -239,3 +245,225 @@ def Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_
 
     return prop_vel, vel_integrative
 
+
+
+"""
+    Esta função retorna os plots finais
+"""
+def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2):
+    clc()  # Limpa o terminal
+    print("A Simulação terminou com sucesso!")
+    
+    # ==> Gráficos dos erros:
+    plt.figure(1, figsize=(10, 6))
+   
+    # -> Subplot para o Error 1
+    plt.subplot(2, 1, 1)
+    
+    if (opcao == "1" or opcao == "3" or opcao == "5"):
+        plt.plot(range(len(error_1_array_plot)), error_1_array_plot, label='Erro x', color='red')
+        plt.ylabel('Erro e_x')
+    elif(opcao == "2" or opcao == "4" or opcao == "6"):
+        plt.plot(range(len(error_1_array_plot)), error_1_array_plot, label='Erro y', color='red')
+        plt.ylabel('Erro e_y')
+
+    plt.title('Evolução dos Erros ao Longo do Tempo')
+    plt.xlabel('Iteração')
+    plt.grid(True)
+    plt.legend()
+
+    # -> Subplot para o Error 2
+    plt.subplot(2, 1, 2)
+
+    if (opcao == "1" or opcao == "3" or opcao == "5"):
+        plt.plot(range(len(error_2_array_plot)), error_2_array_plot, label='Erro y', color='blue')
+        plt.ylabel('Erro e_y')
+    elif(opcao == "2" or opcao == "4" or opcao == "6"):
+        plt.plot(range(len(error_2_array_plot)), error_2_array_plot, label='Erro z', color='blue')
+        plt.ylabel('Erro e_z')
+
+    plt.xlabel('Iteração')
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+
+
+    # ==> Gráfico da trajetória no plano cartesiano
+    pos_1, pos_2 = Compute_Equations(opcao, C, r, r_a, r_b)
+
+    plt.figure(2, figsize=(10, 6))
+    plt.plot(pos_1, pos_2, label='Trajetória de Referência', color='red')
+    plt.plot(p1_g_r_array_plot, p2_g_r_array_plot, label='Trajetória Real', color='blue')
+    plt.title('Trajetória de Referência vs Trajetória Real')
+    
+    if (opcao == "1" or opcao == "3" or opcao == "5"):
+        plt.xlabel('Posição X (mm)')
+        plt.ylabel('Posição Y (mm)')
+
+    elif(opcao == "2" or opcao == "4" or opcao == "6"):
+        plt.xlabel('Posição Y (mm)')
+        plt.ylabel('Posição Z (mm)')
+
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()  
+
+
+
+    # ==> Gráficos das posições das juntas
+    # Gráficos das posições das juntas
+    plt.figure(3, figsize=(12, 10))
+
+    # -> Subplot para cada junta Posição
+    plt.subplot(6, 1, 1)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_1, label='Junta 1', color='red')
+    plt.title('Posições das Juntas ao Longo do Tempo')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 2)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_2, label='Junta 2', color='orange')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 3)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_3, label='Junta 3', color='green')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 4)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_4, label='Junta 4', color='blue')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 5)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_5, label='Junta 5', color='purple')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 6)
+    plt.plot(range(len(error_1_array_plot)), config_rads_array_plot_6, label='Junta 6', color='brown')
+    plt.xlabel('Iteração')
+    plt.ylabel('Posição (rad)')
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+
+
+
+    # ==> Gráficos das Velocidades das juntas
+    # Gráficos das Velocidades das juntas
+    plt.figure(4, figsize=(12, 10))
+
+    # Subplot para cada junta Velocidade
+    plt.subplot(6, 1, 1)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_1, label='Junta 1', color='red')
+    plt.title('Velocidade das Juntas ao Longo do Tempo')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 2)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_2, label='Junta 2', color='orange')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 3)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_3, label='Junta 3', color='green')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 4)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_4, label='Junta 4', color='blue')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 5)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_5, label='Junta 5', color='purple')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 6)
+    plt.plot(range(len(error_1_array_plot)), vel_config_array_plot_6, label='Junta 6', color='brown')
+    plt.xlabel('Iteração')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+
+
+    # ==> Gráficos das Velocidades Cartesianas
+    plt.figure(5, figsize=(12, 10))
+
+    # Subplot para Cartesiana Velocidade
+    plt.subplot(6, 1, 1)
+
+    if (opcao == "1" or opcao == "3" or opcao == "5"):
+        plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_1, label='v_x', color='red')
+
+    elif(opcao == "2" or opcao == "4" or opcao == "6"):
+        plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_1, label='v_y', color='red')
+    
+    plt.title('Velocidade Cartesianas ao Longo do Tempo')
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+
+    plt.subplot(6, 1, 2)
+
+    if (opcao == "1" or opcao == "3" or opcao == "5"):
+        plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_2, label='v_y', color='red')
+
+    elif(opcao == "2" or opcao == "4" or opcao == "6"):
+        plt.plot(range(len(error_1_array_plot)), cartesian_velocities_array_plot_2, label='v_z', color='red')
+    
+    plt.ylabel('Velocidade (rad/s)')
+    plt.grid(True)
+    plt.legend()
+    
+
+    plt.show()
+
+
+
+"""
+    Esta função retorna a Equação escolhida pelo utilizador para dar plot e desenhar a trajetória de referência
+"""
+def Compute_Equations(opcao, C, r, r_a, r_b):
+    theta = np.linspace(0, 2 * np.pi, 1000)
+
+    if(opcao == "1"):
+        pos_1 = C[0] + r * cos(theta)
+        pos_2 = C[1] + r * sin(theta) * cos(theta)
+
+    elif(opcao == "2"):
+        pos_1 = C[1] + r * cos(theta)
+        pos_2 = C[2] + r * sin(theta) * cos(theta)
+
+    elif(opcao == "3"):
+        pos_1 = C[0] + r_a * cos(theta)
+        pos_2 = C[1] + r_b * sin(theta)
+
+    elif(opcao == "4"):
+        pos_1 = C[1] + r_a * cos(theta)
+        pos_2 = C[2] + r_b * sin(theta)
+
+    elif(opcao == "5"):
+        pos_1 = C[0] + r * cos(theta)
+        pos_2 = C[1] + r * sin(theta)
+
+    elif(opcao == "6"):
+        pos_1 = C[1] + r * cos(theta)
+        pos_2 = C[2] + r * sin(theta)
+
+    return pos_1, pos_2
