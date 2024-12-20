@@ -71,7 +71,7 @@ else:
             sys.exit(1)
 
 UFactory_Lite = XArmAPI(ip)
-UFactory_Lite.set_simulation_robot(on_off=True) # Simulação do Robô
+UFactory_Lite.set_simulation_robot(on_off=False) # Simulação do Robô
 UFactory_Lite.motion_enable(enable=True)
 UFactory_Lite.set_mode(0)                     
 UFactory_Lite.set_state(state=0)
@@ -118,7 +118,7 @@ if (opcao=="1" or opcao=="2"):
 elif (opcao=="3" or opcao=="4"):
     C[0], C[1], C[2], r_a, r_b = constantes_elipse(C, r_a, r_b)
 
-
+    C = [float(C[0]), float(C[1]), float(C[2])] # Conversão para float
     r_a = float(r_a)
     r_b = float(r_b)
 
@@ -340,8 +340,17 @@ if metodo == "1":
 
         # ==> Cálculo das Equações da Velocidade Cartesiana:
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
-        cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
-        cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
+
+        # -> Plano Z
+        cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
+        cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
+
+        # -> Plano X
+        # cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
+        # cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
+        
+
+
 
         # ==> Cálculo das Posições Reais:
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
@@ -458,4 +467,4 @@ UFactory_Lite.disconnect()
 
 pprint(error_1_array_plot)
 
-Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2)
+Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
