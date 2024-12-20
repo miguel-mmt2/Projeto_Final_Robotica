@@ -46,6 +46,7 @@ from functions import Compute_Roll_Pitch_Yaw
 from functions import Compute_Position
 from functions import Compute_PI_Velocity_Errors
 from functions import Final_Plot
+from functions import Final_Plot_2
 
 # ==> API do Robô:
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
@@ -430,12 +431,44 @@ else:
 
         #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
         J0R_red_subs = J0R.subs([(t1,config_rads[0]), (t2,config_rads[1]), (t3,config_rads[2]), (t4,config_rads[3]), (t5,config_rads[4]), (t6,config_rads[5])])
+        
+        config_rads_array_plot_1.append(config_rads[0])
+        config_rads_array_plot_2.append(config_rads[1])
+        config_rads_array_plot_3.append(config_rads[2])
+        config_rads_array_plot_4.append(config_rads[3])
+        config_rads_array_plot_5.append(config_rads[4])
+        config_rads_array_plot_6.append(config_rads[5])
+
+
         cartisian_velocities = Compute_cartesian_velocity(opcao,r,r_a,r_b,alpha,alpha_velocity)
+
+        # -> Plano Z
+        # cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
+        # cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
+
+        # -> Plano X
+        cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
+        cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
+
+        # ==> Cálculo das Posições Reais:
+        T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
+        T_0G = T_0G_aux[1]
+
+        p1_g_r, p2_g_r = Compute_Position(opcao, T_0G)
+        p1_g_r_array_plot.append(p1_g_r)
+        p2_g_r_array_plot.append(p2_g_r)
         
         J0R_red_subs = Matrix(J0R_red_subs)
         J0R_red_subs = np.array(J0R_red_subs.evalf(), dtype=float)
 
         vel = np.linalg.inv(J0R_red_subs) @ cartisian_velocities
+
+        vel_config_array_plot_1.append(vel[0])
+        vel_config_array_plot_2.append(vel[1])
+        vel_config_array_plot_3.append(vel[2])
+        vel_config_array_plot_4.append(vel[3])
+        vel_config_array_plot_5.append(vel[4])
+        vel_config_array_plot_6.append(vel[5])
         
 
 
@@ -467,4 +500,8 @@ UFactory_Lite.disconnect()
 
 pprint(error_1_array_plot)
 
-Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
+if metodo == "1":
+    Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
+
+elif metodo == "2":
+    Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
