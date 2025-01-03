@@ -383,7 +383,7 @@ if metodo == "1":
         prop_vel, vel_integrative = Compute_PI_Velocity_Errors(opcao, v1, v2, integrative_error_v1, integrative_error_v2, J0R_red_subs)
         
         # ==> Cálculo das Velocidades das Juntas compensada com PI:
-        vel_config = vel + Kp * prop_vel.T + Ki * vel_integrative.T 
+        vel_config = vel.T + Kp * prop_vel.T + Ki * vel_integrative.T 
 
         vel_config_array_plot_1.append(vel_config[0])
         vel_config_array_plot_2.append(vel_config[1])
@@ -393,7 +393,7 @@ if metodo == "1":
         vel_config_array_plot_6.append(vel_config[5])
 
         # ==> Cálculo das Posições das Juntas compensada com PI:
-        aux_config = config_rads + Kp * vel.T * iterationTime + Ki * vel_integrative.T * iterationTime
+        aux_config = config_rads + vel_config * iterationTime
 
         
         if (opcao == "1" or opcao == "3" or opcao == "5"): # -> Plano Z:
@@ -408,7 +408,7 @@ if metodo == "1":
         # ==> Atualização do Alpha_ideal:
         alpha_i = alpha_i + alpha_velocity * iterationTime
             
-        UFactory_Lite.vc_set_joint_velocity(vel, is_radian=True) # ====> Atualização das Velocidades das Juntas
+        UFactory_Lite.vc_set_joint_velocity(vel_config, is_radian=True) # ====> Atualização das Velocidades das Juntas
     
         # ==> Cálculo do Tempo de Delay():
         finalTime = time.monotonic() # Fim do Relógio
@@ -505,3 +505,5 @@ if metodo == "1":
 
 elif metodo == "2":
     Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
+
+print(len(p1_g_r_array_plot))
