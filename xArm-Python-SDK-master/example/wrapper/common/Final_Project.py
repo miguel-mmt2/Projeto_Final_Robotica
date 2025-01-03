@@ -72,7 +72,7 @@ else:
             sys.exit(1)
 
 UFactory_Lite = XArmAPI(ip)
-UFactory_Lite.set_simulation_robot(on_off=False) # Simulação do Robô
+UFactory_Lite.set_simulation_robot(on_off=True) # Simulação do Robô
 UFactory_Lite.motion_enable(enable=True)
 UFactory_Lite.set_mode(0)                     
 UFactory_Lite.set_state(state=0)
@@ -343,12 +343,14 @@ if metodo == "1":
         cartisian_velocities = Compute_cartesian_velocity(opcao, r, r_a, r_b, alpha_i, alpha_velocity)
 
         # -> Plano Z
-        cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
-        cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
+        if (opcao == "1" or opcao == "3" or opcao == "5"): 
+            cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
+            cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
 
         # -> Plano X
-        # cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
-        # cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
+        elif(opcao == "2" or opcao == "4" or opcao == "6"): 
+            cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
+            cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
         
 
 
@@ -393,7 +395,7 @@ if metodo == "1":
         vel_config_array_plot_6.append(vel_config[5])
 
         # ==> Cálculo das Posições das Juntas compensada com PI:
-        aux_config = config_rads + vel_config * iterationTime
+        aux_config = config_rads + vel_config.T * iterationTime
 
         
         if (opcao == "1" or opcao == "3" or opcao == "5"): # -> Plano Z:
@@ -443,12 +445,14 @@ else:
         cartisian_velocities = Compute_cartesian_velocity(opcao,r,r_a,r_b,alpha,alpha_velocity)
 
         # -> Plano Z
-        # cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
-        # cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
+        if (opcao == "1" or opcao == "3" or opcao == "5"): 
+            cartesian_velocities_array_plot_1.append(cartisian_velocities[0])
+            cartesian_velocities_array_plot_2.append(cartisian_velocities[1])
 
         # -> Plano X
-        cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
-        cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
+        elif(opcao == "2" or opcao == "4" or opcao == "6"):
+            cartesian_velocities_array_plot_1.append(cartisian_velocities[1])
+            cartesian_velocities_array_plot_2.append(cartisian_velocities[2])
 
         # ==> Cálculo das Posições Reais:
         T_0G_aux = UFactory_Lite.get_forward_kinematics(config_rads, input_is_radian=True, return_is_radian=True)
@@ -505,5 +509,3 @@ if metodo == "1":
 
 elif metodo == "2":
     Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, config_rads_array_plot_1, config_rads_array_plot_2, config_rads_array_plot_3, config_rads_array_plot_4, config_rads_array_plot_5, config_rads_array_plot_6, vel_config_array_plot_1, vel_config_array_plot_2, vel_config_array_plot_3, vel_config_array_plot_4, vel_config_array_plot_5, vel_config_array_plot_6, cartesian_velocities_array_plot_1, cartesian_velocities_array_plot_2, iterationTime)
-
-print(len(p1_g_r_array_plot))
