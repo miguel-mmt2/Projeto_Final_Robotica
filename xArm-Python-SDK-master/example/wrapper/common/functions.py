@@ -414,7 +414,6 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     
     plt.title('Velocidade Cartesianas ao Longo do Tempo (rad/s)')
     plt.xlabel('Tempo (s)')
-    plt.ylabel('Velocidade (rad/s)')
     plt.grid(True)
     plt.legend()
 
@@ -426,7 +425,6 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     elif(opcao == "2" or opcao == "4" or opcao == "6"):
         plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, cartesian_velocities_array_plot_2, label='v_z', color='red')
     
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -567,7 +565,6 @@ def Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, co
         plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, cartesian_velocities_array_plot_1, label='v_y', color='red')
     
     plt.title('Velocidade Cartesianas ao Longo do Tempo')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -580,7 +577,6 @@ def Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, co
     elif(opcao == "2" or opcao == "4" or opcao == "6"):
         plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, cartesian_velocities_array_plot_2, label='v_z', color='red')
     
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
