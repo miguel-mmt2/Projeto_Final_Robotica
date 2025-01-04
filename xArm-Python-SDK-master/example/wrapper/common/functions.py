@@ -318,43 +318,37 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     # -> Subplot para cada junta Posição
     plt.subplot(6, 1, 1)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_1, label='Junta 1', color='red')
-    plt.title('Posições das Juntas ao Longo do Tempo')
-    plt.ylabel('Posição (rad)')
+    plt.title('Posições das Juntas ao Longo do Tempo (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 2)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_2, label='Junta 2', color='orange')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 3)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_3, label='Junta 3', color='green')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 4)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_4, label='Junta 4', color='blue')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 5)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_5, label='Junta 5', color='purple')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 6)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, config_rads_array_plot_6, label='Junta 6', color='brown')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -369,36 +363,31 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     # Subplot para cada junta Velocidade
     plt.subplot(6, 1, 1)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_1, label='Junta 1', color='red')
-    plt.title('Velocidade das Juntas ao Longo do Tempo')
-    plt.ylabel('Velocidade (rad/s)')
+    plt.title('Velocidade das Juntas ao Longo do Tempo (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 2)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_2, label='Junta 2', color='orange')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 3)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_3, label='Junta 3', color='green')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 4)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_4, label='Junta 4', color='blue')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 5)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_5, label='Junta 5', color='purple')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -406,14 +395,13 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     plt.subplot(6, 1, 6)
     plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, vel_config_array_plot_6, label='Junta 6', color='brown')
     plt.xlabel('Tempo (s)')
-    plt.ylabel('Velocidade (rad/s)')
     plt.grid(True)
     plt.legend()
 
 
 
     # ==> Gráficos das Velocidades Cartesianas
-    plt.figure(5, figsize=(12, 10))
+    plt.figure(5, figsize=(10, 6))
 
     # Subplot para Cartesiana Velocidade
     plt.subplot(6, 1, 1)
@@ -424,9 +412,9 @@ def Final_Plot(opcao, C, r, r_a, r_b, error_1_array_plot, error_2_array_plot, p1
     elif(opcao == "2" or opcao == "4" or opcao == "6"):
         plt.plot(np.array(range(len(error_1_array_plot))) * iterationTime, cartesian_velocities_array_plot_1, label='v_y', color='red')
     
-    plt.title('Velocidade Cartesianas ao Longo do Tempo')
-    plt.ylabel('Velocidade (rad/s)')
+    plt.title('Velocidade Cartesianas ao Longo do Tempo (rad/s)')
     plt.xlabel('Tempo (s)')
+    plt.ylabel('Velocidade (rad/s)')
     plt.grid(True)
     plt.legend()
 
@@ -484,43 +472,37 @@ def Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, co
     # -> Subplot para cada junta Posição
     plt.subplot(6, 1, 1)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_1, label='Junta 1', color='red')
-    plt.title('Posições das Juntas ao Longo do Tempo')
-    plt.ylabel('Posição (rad)')
+    plt.title('Posições das Juntas ao Longo do Tempo (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 2)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_2, label='Junta 2', color='orange')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 3)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_3, label='Junta 3', color='green')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 4)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_4, label='Junta 4', color='blue')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 5)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_5, label='Junta 5', color='purple')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 6)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, config_rads_array_plot_6, label='Junta 6', color='brown')
-    plt.ylabel('Posição (rad)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -535,36 +517,31 @@ def Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, co
     # Subplot para cada junta Velocidade
     plt.subplot(6, 1, 1)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_1, label='Junta 1', color='red')
-    plt.title('Velocidade das Juntas ao Longo do Tempo')
-    plt.ylabel('Velocidade (rad/s)')
+    plt.title('Velocidade das Juntas ao Longo do Tempo (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 2)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_2, label='Junta 2', color='orange')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 3)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_3, label='Junta 3', color='green')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 4)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_4, label='Junta 4', color='blue')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
 
     plt.subplot(6, 1, 5)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_5, label='Junta 5', color='purple')
-    plt.ylabel('Velocidade (rad/s)')
     plt.xlabel('Tempo (s)')
     plt.grid(True)
     plt.legend()
@@ -572,14 +549,13 @@ def Final_Plot_2(opcao, C, r, r_a, r_b, p1_g_r_array_plot, p2_g_r_array_plot, co
     plt.subplot(6, 1, 6)
     plt.plot(np.array(range(len(config_rads_array_plot_1))) * iterationTime, vel_config_array_plot_6, label='Junta 6', color='brown')
     plt.xlabel('Tempo (s)')
-    plt.ylabel('Velocidade (rad/s)')
     plt.grid(True)
     plt.legend()
 
 
 
     # ==> Gráficos das Velocidades Cartesianas
-    plt.figure(4, figsize=(12, 10))
+    plt.figure(4, figsize=(10, 6))
 
     # Subplot para Cartesiana Velocidade
     plt.subplot(6, 1, 1)
