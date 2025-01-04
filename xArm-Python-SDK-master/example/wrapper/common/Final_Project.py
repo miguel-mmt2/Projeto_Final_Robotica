@@ -323,7 +323,7 @@ UFactory_Lite.set_state(state=0)
 
 # =============================== Método 1 ===============================
 if metodo == "1":
-    while alpha_i < N_voltas*2*pi:
+    while alpha_i <= N_voltas*2*pi:
         startTime = time.monotonic() # Início do Relógio
 
         # ==> Cálculo do Jacobiano Simplificado:
@@ -428,7 +428,7 @@ else:
     # Se o Método escolhido for 2
 
     #UFactory_Lite.set_mode(4) # modo de velocidades
-    while alpha < N_voltas*2*pi:
+    while alpha <= N_voltas*2*pi:
         startTime = time.monotonic()
 
         #J0R_red_subs = eval(subs(J0R,[t1 t2 t3 t4 t5 t6],config_rads(1:6)));
